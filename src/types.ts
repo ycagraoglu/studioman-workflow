@@ -13,4 +13,5 @@ export interface NodeData extends Record<string, unknown> {
   endTime: string;
   date?: string;
   assets: Asset[];
+  color?: string;
 }

@@ -20,13 +20,18 @@ import { v4 as uuidv4 } from 'uuid';
 import CustomNode from './CustomNode';
 import AddStepNode from './AddStepNode';
 import RightDrawer from './RightDrawer';
+import CustomEdge from './CustomEdge';
 import { Asset, NodeData } from '../types';
-import { Save, PlayCircle, Loader2, Maximize, ZoomIn, ZoomOut, Eraser, Plus, Search, FileText, PanelRight, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Save, PlayCircle, Loader2, Maximize, ZoomIn, ZoomOut, Eraser, Plus, Search, FileText, PanelRight, ArrowLeft, RotateCcw, Check } from 'lucide-react';
 import { useDrawer } from '../contexts/DrawerContext';
 
 const nodeTypes = {
   workstation: CustomNode,
   addStep: AddStepNode,
+};
+
+const edgeTypes = {
+  default: CustomEdge,
 };
 
 interface FlowProps {
@@ -76,7 +81,17 @@ function Flow({ workflowId, onBack }: FlowProps) {
             data: {}
           }]);
         }
-        setEdges(data.edges || []);
+        setEdges((data.edges || []).map(edge => ({
+          ...edge,
+          type: 'default',
+          style: { stroke: '#737373', strokeWidth: 1.5 },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 20,
+            height: 20,
+            color: '#737373',
+          }
+        })));
         setIsLoading(false);
       })
       .catch(err => {
@@ -91,7 +106,7 @@ function Flow({ workflowId, onBack }: FlowProps) {
         ...params, 
         type: 'default',
         animated: false, 
-        style: { stroke: '#737373', strokeWidth: 3 },
+        style: { stroke: '#737373', strokeWidth: 1.5 },
         markerEnd: {
           type: MarkerType.ArrowClosed,
           width: 20,
@@ -180,7 +195,7 @@ function Flow({ workflowId, onBack }: FlowProps) {
     [screenToFlowPosition, nodes, setNodes]
   );
 
-  const onSave = useCallback(async () => {
+  const onSave = useCallback(async (silent = false) => {
     if (!workflowId) return;
     setIsSaving(true);
     try {
@@ -192,11 +207,35 @@ function Flow({ workflowId, onBack }: FlowProps) {
       // Optional: show success toast
     } catch (err) {
       console.error('Failed to save workflow:', err);
-      alert('Kaydetme başarısız oldu.');
+      if (!silent) alert('Kaydetme başarısız oldu.');
     } finally {
       setIsSaving(false);
     }
   }, [workflowId, nodes, edges]);
+
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Track changes
+  useEffect(() => {
+    if (!isLoading) {
+      setHasUnsavedChanges(true);
+    }
+  }, [nodes, edges, isLoading]);
+
+  // Auto-save
+  useEffect(() => {
+    if (isLoading || !hasUnsavedChanges) return;
+
+    const timer = setTimeout(() => {
+      onSave(true).then(() => {
+        setHasUnsavedChanges(false);
+        setLastSaved(new Date());
+      });
+    }, 2000); // Save 2 seconds after last change
+
+    return () => clearTimeout(timer);
+  }, [nodes, edges, hasUnsavedChanges, isLoading, onSave]);
 
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
@@ -263,10 +302,11 @@ function Flow({ workflowId, onBack }: FlowProps) {
         onDrop={onDrop}
         onDragOver={onDragOver}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
         fitViewOptions={{ maxZoom: 1, minZoom: 0.1 }}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        className="bg-gray-100"
+        className="bg-[#f5f5f5]"
       >
         <Background 
           variant={BackgroundVariant.Dots} 
@@ -288,6 +328,21 @@ function Flow({ workflowId, onBack }: FlowProps) {
             <FileText className="w-4 h-4 text-indigo-500" />
             <span className="font-semibold text-gray-800">{workflowName}</span>
           </div>
+          { (isSaving || hasUnsavedChanges) && (
+            <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm px-3 py-2 flex items-center gap-2 text-xs text-gray-500">
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin text-indigo-500" />
+                  <span>Kaydediliyor...</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-2 h-2 rounded-full bg-amber-400" />
+                  <span>Kaydedilmemiş değişiklikler</span>
+                </>
+              )}
+            </div>
+          )}
         </Panel>
 
         {/* Bottom Left Controls */}

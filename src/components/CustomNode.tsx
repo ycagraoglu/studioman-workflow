@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Handle, Position, NodeProps, useReactFlow, Node } from '@xyflow/react';
 import { NodeData, Asset } from '../types';
-import { MapPin, User, Camera, X, Clock, Edit2, Check, Trash2, Plus, Play, Power, MoreHorizontal } from 'lucide-react';
+import { MapPin, User, Camera, X, Clock, Edit2, Check, Trash2, Plus, Play, Power, MoreHorizontal, Palette } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useDrawer } from '../contexts/DrawerContext';
 import TimePicker from './TimePicker';
@@ -13,9 +13,30 @@ export type WorkstationNode = Node<NodeData & { isActive?: boolean }, 'workstati
 export default function CustomNode({ data, id, isConnectable, selected }: NodeProps<WorkstationNode>) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const { setNodes, getNodes, setEdges } = useReactFlow();
   const { openDrawer } = useDrawer();
   const isActive = data.isActive !== false; // Default to true if undefined
+
+  const COLORS = [
+    { id: 'white', class: 'bg-white' },
+    { id: 'blue', class: 'bg-blue-50' },
+    { id: 'emerald', class: 'bg-emerald-50' },
+    { id: 'amber', class: 'bg-amber-50' },
+    { id: 'purple', class: 'bg-purple-50' },
+    { id: 'pink', class: 'bg-pink-50' },
+    { id: 'rose', class: 'bg-rose-50' },
+  ];
+
+  const getNodeColor = () => {
+    if (data.color) return data.color;
+    if (!data.assets || data.assets.length === 0) return 'bg-white';
+    const firstType = data.assets[0].type;
+    if (firstType === 'location') return 'bg-blue-50';
+    if (firstType === 'personnel') return 'bg-emerald-50';
+    if (firstType === 'equipment') return 'bg-amber-50';
+    return 'bg-white';
+  };
 
   // Helper to convert HH:mm to minutes
   const timeToMinutes = (timeStr: string) => {
@@ -201,19 +222,47 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
         >
           <Trash2 className="w-4 h-4" />
         </button>
-        <button className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors" title="Daha Fazla">
-          <MoreHorizontal className="w-4 h-4" />
-        </button>
+        <div className="relative">
+          <button 
+            onClick={(e) => { e.stopPropagation(); setShowColorPicker(!showColorPicker); }}
+            className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors" 
+            title="Renk Seç"
+          >
+            <Palette className="w-4 h-4" />
+          </button>
+          
+          {showColorPicker && (
+            <div className="absolute top-full mt-1 left-0 bg-white border border-gray-200 shadow-lg rounded-lg p-2 flex gap-1 z-50">
+              {COLORS.map(c => (
+                <button
+                  key={c.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateNodeData({ color: c.class });
+                    setShowColorPicker(false);
+                  }}
+                  className={cn(
+                    "w-6 h-6 rounded-full border border-gray-200 hover:scale-110 transition-transform",
+                    c.class,
+                    data.color === c.class ? "ring-2 ring-indigo-500 ring-offset-1" : ""
+                  )}
+                  title="Renk Seç"
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className={cn(
-        "w-64 bg-white rounded-xl shadow-md border-2 transition-all duration-200",
+        "w-64 rounded-xl shadow-md border-2 transition-all duration-200",
+        getNodeColor(),
         selected ? "border-indigo-500 shadow-lg" : "border-transparent",
         hasConflict ? "border-red-500 bg-red-50" : ""
       )}>
         <Handle type="target" position={Position.Left} isConnectable={isConnectable} className="w-3 h-3 bg-white border-2 border-gray-300" />
         
-        <div className="p-3 border-b border-gray-100 flex flex-col gap-2 bg-gray-50 rounded-t-xl">
+        <div className="p-3 border-b border-black/5 flex flex-col gap-2 bg-black/5 rounded-t-xl">
           <div className="flex justify-between items-center">
             <DatePicker 
               value={data.date} 
