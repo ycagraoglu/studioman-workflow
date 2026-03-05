@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { AssetCategory } from '../types';
 
 export type DrawerMode = 'addNode' | 'addAsset' | null;
 
@@ -6,7 +7,9 @@ interface DrawerContextType {
   isOpen: boolean;
   mode: DrawerMode;
   targetNodeId: string | null;
-  openDrawer: (mode: DrawerMode, nodeId: string) => void;
+  targetEdgeId: string | null;
+  initialCategory?: AssetCategory;
+  openDrawer: (mode: DrawerMode, id: string, isEdge?: boolean, category?: AssetCategory) => void;
   closeDrawer: () => void;
 }
 
@@ -16,10 +19,19 @@ export function DrawerProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<DrawerMode>(null);
   const [targetNodeId, setTargetNodeId] = useState<string | null>(null);
+  const [targetEdgeId, setTargetEdgeId] = useState<string | null>(null);
+  const [initialCategory, setInitialCategory] = useState<AssetCategory>(null);
 
-  const openDrawer = (newMode: DrawerMode, nodeId: string) => {
+  const openDrawer = (newMode: DrawerMode, id: string, isEdge = false, category: AssetCategory = null) => {
     setMode(newMode);
-    setTargetNodeId(nodeId);
+    setInitialCategory(category);
+    if (isEdge) {
+      setTargetEdgeId(id);
+      setTargetNodeId(null);
+    } else {
+      setTargetNodeId(id);
+      setTargetEdgeId(null);
+    }
     setIsOpen(true);
   };
 
@@ -28,11 +40,13 @@ export function DrawerProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => {
       setMode(null);
       setTargetNodeId(null);
+      setTargetEdgeId(null);
+      setInitialCategory(null);
     }, 300); // Wait for transition
   };
 
   return (
-    <DrawerContext.Provider value={{ isOpen, mode, targetNodeId, openDrawer, closeDrawer }}>
+    <DrawerContext.Provider value={{ isOpen, mode, targetNodeId, targetEdgeId, initialCategory, openDrawer, closeDrawer }}>
       {children}
     </DrawerContext.Provider>
   );

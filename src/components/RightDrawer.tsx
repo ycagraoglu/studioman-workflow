@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDrawer } from '../contexts/DrawerContext';
 import { useReactFlow, MarkerType } from '@xyflow/react';
 import { Search, X, MapPin, User, Camera, PlusSquare, Play, Calendar, ArrowLeft, ChevronRight, Briefcase, Settings, FileText, Video, Music, Image as ImageIcon, CheckSquare, Plus, Aperture, Focus, MonitorPlay, Film, Clapperboard, Scissors, Wand2, Sun, Printer, Users, Palette, HardDrive, Share2, Car, Utensils, Cake, Laptop, Monitor, PartyPopper, Heart, Church, Tent, Plane, Sparkles, Brush, Crown, Gift, Truck, Mic, Cloud, Smartphone, Edit2, Trash2 } from 'lucide-react';
-import { Asset, NodeData } from '../types';
+import { Asset, NodeData, AssetCategory } from '../types';
 import { cn } from '../utils/cn';
 import { showConflictToast } from '../utils/toast';
 
@@ -63,6 +63,8 @@ const ASSETS: Asset[] = [
   { id: 'eq-3', type: 'equipment', name: '24-70mm f/2.8', roleOrDetails: 'Lens' },
   { id: 'eq-4', type: 'equipment', name: 'DJI Mavic 3', roleOrDetails: 'Dron' },
   { id: 'eq-5', type: 'equipment', name: 'Temizlik Kiti', roleOrDetails: 'Diğer' },
+  { id: 'veh-1', type: 'vehicle', name: '16 BA 529', roleOrDetails: 'Şirket Aracı' },
+  { id: 'veh-2', type: 'vehicle', name: '34 ABC 123', roleOrDetails: 'Şirket Aracı' },
 ];
 
 const DEFAULT_NODE_TYPES = [
@@ -71,13 +73,22 @@ const DEFAULT_NODE_TYPES = [
   { id: 'shooting', title: 'Çekim', description: 'Fotoğraf/Video çekim aşaması', iconName: 'Play', color: 'text-emerald-500' },
 ];
 
-type AssetCategory = 'location' | 'personnel' | 'equipment' | null;
-
 export default function RightDrawer() {
-  const { isOpen, mode, targetNodeId, closeDrawer } = useDrawer();
+  const { isOpen, mode, targetNodeId, targetEdgeId, initialCategory, closeDrawer } = useDrawer();
   const { setNodes, setEdges } = useReactFlow();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<AssetCategory>(null);
+
+  useEffect(() => {
+    if (isOpen && initialCategory) {
+      setSelectedCategory(initialCategory);
+    } else if (!isOpen) {
+      setTimeout(() => {
+        setSelectedCategory(null);
+        setSearch('');
+      }, 300);
+    }
+  }, [isOpen, initialCategory]);
 
   const [customNodeTypes, setCustomNodeTypes] = useState<any[]>(() => {
     const saved = localStorage.getItem('customNodeTypes');
@@ -89,6 +100,7 @@ export default function RightDrawer() {
   const [newTypeTitle, setNewTypeTitle] = useState('');
   const [newTypeDesc, setNewTypeDesc] = useState('');
   const [newTypeIcon, setNewTypeIcon] = useState('Briefcase');
+  const [nodeTypeToDelete, setNodeTypeToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('customNodeTypes', JSON.stringify(customNodeTypes));
@@ -121,15 +133,34 @@ export default function RightDrawer() {
     if (!targetNodeId) return;
     
     setNodes((nds) => {
-      // If target is the 'addStep' node, replace it
       const targetNode = nds.find(n => n.id === targetNodeId);
+      
+      // Calculate times based on previous node
+      let newStartTime = '09:00';
+      let newEndTime = '10:00';
+      let newDate = new Date().toISOString().split('T')[0];
+
+      if (targetNode && targetNode.type !== 'addStep' && targetNode.data.endTime) {
+          newDate = targetNode.data.date as string || newDate;
+          newStartTime = targetNode.data.endTime as string;
+          
+          // Add 30 minutes duration
+          const [h, m] = newStartTime.split(':').map(Number);
+          const startMins = h * 60 + m;
+          const endMins = startMins + 30;
+          const endH = Math.floor(endMins / 60) % 24;
+          const endM = endMins % 60;
+          newEndTime = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`;
+      }
+
+      // If target is the 'addStep' node, replace it
       if (targetNode?.type === 'addStep') {
         return nds.map((node) => {
           if (node.id === targetNodeId) {
             return {
               ...node,
               type: 'workstation',
-              data: { title: title, startTime: '09:00', endTime: '10:00', assets: [] },
+              data: { title: title, startTime: '09:00', endTime: '10:00', date: newDate, assets: [] }, // Keep default for first node
             };
           }
           return node;
@@ -169,7 +200,7 @@ export default function RightDrawer() {
           id: newNodeId,
           type: 'workstation',
           position: { x: newX, y: newY },
-          data: { title: title, startTime: '09:00', endTime: '10:00', assets: [] },
+          data: { title: title, startTime: newStartTime, endTime: newEndTime, date: newDate, assets: [] },
         }
       ];
     });
@@ -177,64 +208,76 @@ export default function RightDrawer() {
   };
 
   const handleAddAsset = (asset: Asset) => {
-    if (!targetNodeId) return;
+    if (targetNodeId) {
+      setNodes((nds) => {
+        const targetNode = nds.find(n => n.id === targetNodeId);
+        if (!targetNode) return nds;
 
-    setNodes((nds) => {
-      const targetNode = nds.find(n => n.id === targetNodeId);
-      if (!targetNode) return nds;
+        // Helper to convert HH:mm to minutes
+        const timeToMinutes = (timeStr: string) => {
+          const [hours, minutes] = (timeStr || '00:00').split(':').map(Number);
+          return hours * 60 + (minutes || 0);
+        };
 
-      // Helper to convert HH:mm to minutes
-      const timeToMinutes = (timeStr: string) => {
-        const [hours, minutes] = (timeStr || '00:00').split(':').map(Number);
-        return hours * 60 + (minutes || 0);
-      };
+        const checkOverlap = (start1: string, end1: string, start2: string, end2: string) => {
+          const s1 = timeToMinutes(start1);
+          const e1 = timeToMinutes(end1);
+          const s2 = timeToMinutes(start2);
+          const e2 = timeToMinutes(end2);
+          return s1 < e2 && s2 < e1;
+        };
 
-      const checkOverlap = (start1: string, end1: string, start2: string, end2: string) => {
-        const s1 = timeToMinutes(start1);
-        const e1 = timeToMinutes(end1);
-        const s2 = timeToMinutes(start2);
-        const e2 = timeToMinutes(end2);
-        return s1 < e2 && s2 < e1;
-      };
+        // Check for conflicts before adding
+        if (asset.type !== 'location') {
+          const conflictingNode = nds.find(otherNode => {
+            if (otherNode.id === targetNodeId) return false;
+            if (otherNode.data.date !== targetNode.data.date) return false;
+            if (!checkOverlap(
+              targetNode.data.startTime as string || '09:00', 
+              targetNode.data.endTime as string || '10:00', 
+              otherNode.data.startTime as string || '09:00', 
+              otherNode.data.endTime as string || '10:00'
+            )) return false;
+            
+            const otherAssets = (otherNode.data.assets as Asset[]) || [];
+            return otherAssets.some(a => a.id === asset.id);
+          });
 
-      // Check for conflicts before adding
-      if (asset.type !== 'location') {
-        const conflictingNode = nds.find(otherNode => {
-          if (otherNode.id === targetNodeId) return false;
-          if (otherNode.data.date !== targetNode.data.date) return false;
-          if (!checkOverlap(
-            targetNode.data.startTime as string || '09:00', 
-            targetNode.data.endTime as string || '10:00', 
-            otherNode.data.startTime as string || '09:00', 
-            otherNode.data.endTime as string || '10:00'
-          )) return false;
-          
-          const otherAssets = (otherNode.data.assets as Asset[]) || [];
-          return otherAssets.some(a => a.id === asset.id);
-        });
-
-        if (conflictingNode) {
-          showConflictToast(asset.name, conflictingNode.data.title || 'İsimsiz İş');
-          return nds; // Return unchanged nodes
-        }
-      }
-
-      return nds.map((node) => {
-        if (node.id === targetNodeId) {
-          const currentAssets = (node.data as NodeData).assets || [];
-          if (!currentAssets.some(a => a.id === asset.id)) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                assets: [...currentAssets, asset],
-              },
-            };
+          if (conflictingNode) {
+            showConflictToast(asset.name, (conflictingNode.data.title as string) || 'İsimsiz İş');
+            return nds; // Return unchanged nodes
           }
         }
-        return node;
+
+        return nds.map((node) => {
+          if (node.id === targetNodeId) {
+            const currentAssets = (node.data as NodeData).assets || [];
+            if (!currentAssets.some(a => a.id === asset.id)) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  assets: [...currentAssets, asset],
+                },
+              };
+            }
+          }
+          return node;
+        });
       });
-    });
+    } else if (targetEdgeId) {
+      setEdges((eds) => 
+        eds.map(edge => {
+          if (edge.id === targetEdgeId) {
+            return {
+              ...edge,
+              data: { ...edge.data, vehicle: asset }
+            };
+          }
+          return edge;
+        })
+      );
+    }
     // Don't close drawer immediately so they can add multiple
   };
 
@@ -243,6 +286,7 @@ export default function RightDrawer() {
       case 'location': return <MapPin className="w-5 h-5" />;
       case 'personnel': return <User className="w-5 h-5" />;
       case 'equipment': return <Camera className="w-5 h-5" />;
+      case 'vehicle': return <Car className="w-5 h-5" />;
       default: return null;
     }
   };
@@ -258,9 +302,10 @@ export default function RightDrawer() {
   const getCategoryTitle = (category: AssetCategory) => {
     switch (category) {
       case 'location': return 'Lokasyonlar';
-      case 'personnel': return 'Personeller';
+      case 'personnel': return 'Ekip';
       case 'equipment': return 'Ekipmanlar';
-      default: return 'Varlık Ekle';
+      case 'vehicle': return 'Araçlar';
+      default: return 'Kaynak Ekle';
     }
   };
 
@@ -272,6 +317,40 @@ export default function RightDrawer() {
           className="absolute inset-0 bg-black/5 z-40 transition-opacity"
           onClick={closeDrawer}
         />
+      )}
+
+      {nodeTypeToDelete && (
+        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/20 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-6 max-w-sm w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">İş Tipini Sil</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Bu iş tipini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setNodeTypeToDelete(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={() => {
+                  setCustomNodeTypes(prev => prev.filter(n => n.id !== nodeTypeToDelete));
+                  if (editingNodeId === nodeTypeToDelete) {
+                    setIsAddingNewType(false);
+                    setEditingNodeId(null);
+                    setNewTypeTitle('');
+                    setNewTypeDesc('');
+                  }
+                  setNodeTypeToDelete(null);
+                }}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+              >
+                Evet, Sil
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       
       {/* Drawer */}
@@ -353,15 +432,7 @@ export default function RightDrawer() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (window.confirm('Bu iş tipini silmek istediğinize emin misiniz?')) {
-                                setCustomNodeTypes(prev => prev.filter(n => n.id !== nodeType.id));
-                                if (editingNodeId === nodeType.id) {
-                                  setIsAddingNewType(false);
-                                  setEditingNodeId(null);
-                                  setNewTypeTitle('');
-                                  setNewTypeDesc('');
-                                }
-                              }
+                              setNodeTypeToDelete(nodeType.id);
                             }}
                             className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                             title="Sil"
@@ -517,7 +588,7 @@ export default function RightDrawer() {
                   <div className="p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:shadow transition-all text-emerald-500">
                     <User className="w-5 h-5" />
                   </div>
-                  <div className="font-medium text-gray-900 text-sm">Personeller</div>
+                  <div className="font-medium text-gray-900 text-sm">Ekip</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
@@ -548,7 +619,8 @@ export default function RightDrawer() {
                   <div className={cn(
                     "p-1.5 bg-white border border-gray-100 rounded-md shadow-sm group-hover:shadow transition-all",
                     asset.type === 'location' ? "text-blue-500" :
-                    asset.type === 'personnel' ? "text-emerald-500" : "text-amber-500"
+                    asset.type === 'personnel' ? "text-emerald-500" : 
+                    asset.type === 'vehicle' ? "text-amber-800" : "text-amber-500"
                   )}>
                     {renderIcon(asset.type)}
                   </div>

@@ -12,7 +12,9 @@ import {
   isSameMonth, 
   isSameDay, 
   startOfWeek, 
-  endOfWeek 
+  endOfWeek,
+  isBefore,
+  startOfDay
 } from 'date-fns';
 import { tr } from 'date-fns/locale';
 
@@ -27,6 +29,7 @@ export default function DatePicker({ value, onChange, disabled }: DatePickerProp
   const popoverRef = useRef<HTMLDivElement>(null);
   
   const today = new Date();
+  const todayStart = startOfDay(today);
   const currentValue = value ? parseISO(value) : today;
   
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(currentValue));
@@ -61,8 +64,8 @@ export default function DatePicker({ value, onChange, disabled }: DatePickerProp
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
-  const startDate = startOfWeek(monthStart, { weekStarts: 1 }); // Monday
-  const endDate = endOfWeek(monthEnd, { weekStarts: 1 }); // Sunday
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Monday
+  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 }); // Sunday
 
   const dateFormat = "dd.MM.yyyy";
   const days = eachDayOfInterval({
@@ -131,20 +134,23 @@ export default function DatePicker({ value, onChange, disabled }: DatePickerProp
               const isSelected = isSameDay(day, currentValue);
               const isToday = isSameDay(day, today);
               const isCurrentMonth = isSameMonth(day, currentMonth);
+              const isPast = isBefore(day, todayStart);
 
               return (
                 <button
                   key={day.toString()}
+                  disabled={isPast}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDateClick(day);
+                    if (!isPast) handleDateClick(day);
                   }}
                   className={cn(
                     "h-8 w-full rounded-md text-xs flex items-center justify-center transition-colors",
-                    !isCurrentMonth && "text-gray-300",
-                    isCurrentMonth && !isSelected && "text-gray-700 hover:bg-gray-100",
+                    !isCurrentMonth && !isPast && "text-gray-300",
+                    isCurrentMonth && !isSelected && !isPast && "text-gray-700 hover:bg-gray-100",
                     isSelected && "bg-indigo-500 text-white font-medium shadow-sm hover:bg-indigo-600",
-                    isToday && !isSelected && "text-indigo-600 font-bold bg-indigo-50"
+                    isToday && !isSelected && "text-indigo-600 font-bold bg-indigo-50",
+                    isPast && "text-gray-300 opacity-50 cursor-not-allowed bg-gray-50/50"
                   )}
                 >
                   {format(day, 'd')}
