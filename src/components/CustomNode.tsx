@@ -14,13 +14,13 @@ import { NodeAttachmentsSection } from './Node/NodeAttachmentsSection';
 import FilePreviewModal from './FilePreviewModal';
 
 const COLORS = [
-  { id: 'white', class: 'bg-white dark:bg-slate-800' },
-  { id: 'blue', class: 'bg-blue-50 dark:bg-blue-900/20' },
-  { id: 'emerald', class: 'bg-emerald-50 dark:bg-emerald-900/20' },
-  { id: 'amber', class: 'bg-amber-50 dark:bg-amber-900/20' },
-  { id: 'purple', class: 'bg-purple-50 dark:bg-purple-900/20' },
-  { id: 'pink', class: 'bg-pink-50 dark:bg-pink-900/20' },
-  { id: 'rose', class: 'bg-rose-50 dark:bg-rose-900/20' },
+  { id: 'white', class: 'bg-white dark:bg-slate-900' },
+  { id: 'blue', class: 'bg-blue-50 dark:bg-blue-950/40' },
+  { id: 'emerald', class: 'bg-emerald-50 dark:bg-emerald-950/40' },
+  { id: 'amber', class: 'bg-amber-50 dark:bg-amber-950/40' },
+  { id: 'purple', class: 'bg-purple-50 dark:bg-purple-950/40' },
+  { id: 'pink', class: 'bg-pink-50 dark:bg-pink-950/40' },
+  { id: 'rose', class: 'bg-rose-50 dark:bg-rose-950/40' },
 ];
 
 export default function CustomNode({ data, id, isConnectable, selected }: NodeProps<any>) {
@@ -30,12 +30,12 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
 
   const getNodeColor = () => {
     if (data.color) return data.color;
-    if (!data.assets || data.assets.length === 0) return 'bg-white dark:bg-slate-800';
+    if (!data.assets || data.assets.length === 0) return 'bg-white dark:bg-slate-900';
     const firstType = data.assets[0].type;
-    if (firstType === 'location') return 'bg-blue-50 dark:bg-blue-900/20';
-    if (firstType === 'personnel') return 'bg-emerald-50 dark:bg-emerald-900/20';
-    if (firstType === 'equipment') return 'bg-amber-50 dark:bg-amber-900/20';
-    return 'bg-white dark:bg-slate-800';
+    if (firstType === 'location') return 'bg-blue-50 dark:bg-blue-950/40';
+    if (firstType === 'personnel') return 'bg-emerald-50 dark:bg-emerald-950/40';
+    if (firstType === 'equipment') return 'bg-amber-50 dark:bg-amber-950/40';
+    return 'bg-white dark:bg-slate-900';
   };
 
   const conflicts = logic.validateNode(id, data.date, data.startTime, data.endTime);
@@ -91,7 +91,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
       <div className={cn(
         "w-64 rounded-xl shadow-md border-2 transition-all duration-200",
         getNodeColor(),
-        selected ? "border-primary shadow-lg" : "border-transparent",
+        selected ? "border-primary shadow-lg" : "border-transparent dark:border-slate-700",
         hasConflict ? "border-red-500 bg-red-50 dark:bg-red-900/20" : ""
       )}>
         {hasConflict && (
