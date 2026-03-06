@@ -109,7 +109,7 @@ export default function Dashboard({ onBack, onSelectWorkflow }: DashboardProps) 
 
   return (
     <div className="flex-grow h-full bg-gray-50 dark:bg-slate-800 overflow-y-auto transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-8 sm:pt-24 sm:pb-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <button 

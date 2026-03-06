@@ -202,7 +202,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-20 pb-8 sm:pt-24 sm:pb-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
           <div className="text-center sm:text-left">
             <h1 className="text-2xl font-medium text-gray-900 dark:text-white tracking-tight">İş Akışları</h1>
