@@ -144,7 +144,7 @@ export function useFlowLogic(workflowId: string) {
       await fetch(`/api/workflows/${workflowId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nodes, edges })
+        body: JSON.stringify({ name: workflowName, nodes, edges })
       });
     } catch (err) {
       console.error('Failed to save workflow:', err);
@@ -152,13 +152,13 @@ export function useFlowLogic(workflowId: string) {
     } finally {
       setIsSaving(false);
     }
-  }, [workflowId, nodes, edges]);
+  }, [workflowId, workflowName, nodes, edges]);
 
   useEffect(() => {
     if (!isLoading) {
       setHasUnsavedChanges(true);
     }
-  }, [nodes, edges, isLoading]);
+  }, [nodes, edges, workflowName, isLoading]);
 
   useEffect(() => {
     if (isLoading || !hasUnsavedChanges) return;
@@ -169,7 +169,7 @@ export function useFlowLogic(workflowId: string) {
       });
     }, 2000);
     return () => clearTimeout(timer);
-  }, [nodes, edges, hasUnsavedChanges, isLoading, onSave]);
+  }, [nodes, edges, workflowName, hasUnsavedChanges, isLoading, onSave]);
 
   const onLayout = useCallback(() => {
     const dagreGraph = new dagre.graphlib.Graph();
@@ -287,7 +287,7 @@ export function useFlowLogic(workflowId: string) {
   return {
     nodes, setNodes, onNodesChange,
     edges, setEdges, onEdgesChange,
-    isLoading, isSaving, workflowName,
+    isLoading, isSaving, workflowName, setWorkflowName,
     hasUnsavedChanges, lastSaved,
     onConnect, onSave, onLayout, onDuplicate, onDrop
   };

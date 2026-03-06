@@ -37,7 +37,7 @@ function Flow({ workflowId, onBack }: FlowProps) {
   const {
     nodes, setNodes, onNodesChange,
     edges, setEdges, onEdgesChange,
-    isLoading, isSaving, workflowName,
+    isLoading, isSaving, workflowName, setWorkflowName,
     hasUnsavedChanges,
     onConnect, onSave, onLayout, onDuplicate, onDrop
   } = useFlowLogic(workflowId);
@@ -167,6 +167,7 @@ function Flow({ workflowId, onBack }: FlowProps) {
         <FlowControls 
           onBack={onBack}
           workflowName={workflowName}
+          onWorkflowNameChange={setWorkflowName}
           isSaving={isSaving}
           hasUnsavedChanges={hasUnsavedChanges}
           showMiniMap={showMiniMap}
