@@ -46,7 +46,7 @@ export default function CustomEdge({
         >
           {data?.vehicle && (
             <div 
-              className="bg-amber-100 border border-amber-200 rounded-md shadow-sm px-2 py-1 flex items-center gap-1 text-xs font-medium text-amber-800 group cursor-pointer hover:bg-amber-200 transition-colors"
+              className="bg-amber-100 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800/50 rounded-md shadow-sm px-2 py-1 flex items-center gap-1 text-xs font-medium text-amber-800 dark:text-amber-200 group cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-900/60 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 openDrawer('addAsset', id, true, 'vehicle');
@@ -55,7 +55,7 @@ export default function CustomEdge({
               <Car className="w-3 h-3" />
               {data.vehicle.name}
               <button
-                className="ml-1 p-0.5 hover:bg-amber-300 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                className="ml-1 p-0.5 hover:bg-amber-300 dark:hover:bg-amber-800 rounded-full transition-colors opacity-0 group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation();
                   setEdges((edges) =>

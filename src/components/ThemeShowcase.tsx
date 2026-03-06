@@ -119,7 +119,7 @@ export default function ThemeShowcase({ onClose }: { onClose: () => void }) {
                         <h3 className="font-bold text-gray-900 dark:text-white text-base">{theme.name}</h3>
                         {colorTheme === theme.id && <Check className="w-5 h-5 text-primary" />}
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{theme.description}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">{theme.description}</p>
                     </div>
                   </div>
                 </div>

@@ -231,7 +231,7 @@ export default function Dashboard({ onBack, onSelectWorkflow }: DashboardProps) 
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
                         <Calendar className="w-4 h-4 text-gray-400" />
                         {item.date ? format(new Date(item.date), 'd MMM yyyy', { locale: tr }) : 'Tarihsiz'}
                       </div>

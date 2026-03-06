@@ -162,7 +162,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
               >
                 İptal
               </button>
@@ -187,7 +187,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
               >
                 İptal
               </button>
@@ -211,7 +211,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
           <div className="flex flex-col min-[400px]:flex-row items-stretch sm:items-center gap-3">
             <button
               onClick={onViewDashboard}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-95"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-95"
             >
               <LayoutDashboard className="w-5 h-5 text-primary" />
               Kaynak Takibi

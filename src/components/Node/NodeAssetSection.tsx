@@ -37,15 +37,15 @@ export const NodeAssetSection: React.FC<NodeAssetSectionProps> = ({
       {/* Locations */}
       {locations.length > 0 && (
         <div className="space-y-1.5">
-          <div className="text-[10px] font-semibold text-gray-400 tracking-wider px-1">LOKASYONLAR</div>
+          <div className="text-[10px] font-semibold text-gray-400 dark:text-slate-400 tracking-wider px-1">LOKASYONLAR</div>
           {locations.map((asset) => (
-            <div key={asset.id} className="flex flex-col bg-white border border-gray-200 rounded p-1.5 group shadow-sm">
+            <div key={asset.id} className="flex flex-col bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded p-1.5 group shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-1 rounded bg-blue-50 text-blue-500">
+                  <div className="p-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-500">
                     {renderIcon(asset.type)}
                   </div>
-                  <span className="text-xs font-medium text-gray-700">{asset.name}</span>
+                  <span className="text-xs font-medium text-gray-700 dark:text-slate-200">{asset.name}</span>
                   {asset.mapUrl && !isEditing && editingMapUrlId !== asset.id && (
                     <a 
                       href={asset.mapUrl} 
@@ -75,7 +75,7 @@ export const NodeAssetSection: React.FC<NodeAssetSectionProps> = ({
                         e.stopPropagation();
                         onSetEditingMapUrlId(asset.id);
                       }}
-                      className="text-[10px] text-gray-400 hover:text-indigo-600 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-[10px] text-gray-400 dark:text-slate-400 hover:text-indigo-600 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
                       title="Linki Düzenle"
                     >
                       <Edit2 className="w-3 h-3" />
@@ -84,14 +84,14 @@ export const NodeAssetSection: React.FC<NodeAssetSectionProps> = ({
                 </div>
                 <button 
                   onClick={() => onRemoveAsset(asset.id)}
-                  className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="text-gray-400 dark:text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <X className="w-3 h-3" />
                 </button>
               </div>
               {(isEditing || editingMapUrlId === asset.id) && (
                 <div className="mt-2 flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-gray-400" />
+                  <MapPin className="w-3 h-3 text-gray-400 dark:text-slate-400" />
                   <input
                     type="text"
                     value={asset.mapUrl || ''}
@@ -106,7 +106,7 @@ export const NodeAssetSection: React.FC<NodeAssetSectionProps> = ({
                     }}
                     autoFocus={editingMapUrlId === asset.id && !isEditing}
                     placeholder="Google Maps Linki"
-                    className="flex-1 text-[10px] text-gray-600 border-b border-gray-200 focus:border-indigo-500 focus:outline-none bg-transparent pb-0.5"
+                    className="flex-1 text-[10px] text-gray-600 dark:text-slate-300 border-b border-gray-200 dark:border-slate-600 focus:border-indigo-500 focus:outline-none bg-transparent pb-0.5"
                   />
                   {editingMapUrlId === asset.id && !isEditing && (
                     <button 
@@ -126,18 +126,18 @@ export const NodeAssetSection: React.FC<NodeAssetSectionProps> = ({
       {/* Personnel */}
       {personnel.length > 0 && (
         <div className="space-y-1.5">
-          <div className="text-[10px] font-semibold text-gray-400 tracking-wider px-1">EKİP</div>
+          <div className="text-[10px] font-semibold text-gray-400 dark:text-slate-400 tracking-wider px-1">EKİP</div>
           {personnel.map((asset) => (
-            <div key={asset.id} className="flex items-center justify-between bg-white border border-gray-200 rounded p-1.5 group shadow-sm">
+            <div key={asset.id} className="flex items-center justify-between bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded p-1.5 group shadow-sm">
               <div className="flex items-center gap-2">
-                <div className="p-1 rounded bg-emerald-50 text-emerald-500">
+                <div className="p-1 rounded bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500">
                   {renderIcon(asset.type)}
                 </div>
-                <span className="text-xs font-medium text-gray-700">{asset.name}</span>
+                <span className="text-xs font-medium text-gray-700 dark:text-slate-200">{asset.name}</span>
               </div>
               <button 
                 onClick={() => onRemoveAsset(asset.id)}
-                className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="text-gray-400 dark:text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -149,18 +149,18 @@ export const NodeAssetSection: React.FC<NodeAssetSectionProps> = ({
       {/* Equipment */}
       {equipment.length > 0 && (
         <div className="space-y-1.5">
-          <div className="text-[10px] font-semibold text-gray-400 tracking-wider px-1">EKİPMANLAR</div>
+          <div className="text-[10px] font-semibold text-gray-400 dark:text-slate-400 tracking-wider px-1">EKİPMANLAR</div>
           {equipment.map((asset) => (
-            <div key={asset.id} className="flex items-center justify-between bg-white border border-gray-200 rounded p-1.5 group shadow-sm">
+            <div key={asset.id} className="flex items-center justify-between bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded p-1.5 group shadow-sm">
               <div className="flex items-center gap-2">
-                <div className="p-1 rounded bg-amber-50 text-amber-500">
+                <div className="p-1 rounded bg-amber-50 dark:bg-amber-900/20 text-amber-500">
                   {renderIcon(asset.type)}
                 </div>
-                <span className="text-xs font-medium text-gray-700">{asset.name}</span>
+                <span className="text-xs font-medium text-gray-700 dark:text-slate-200">{asset.name}</span>
               </div>
               <button 
                 onClick={() => onRemoveAsset(asset.id)}
-                className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="text-gray-400 dark:text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <X className="w-3 h-3" />
               </button>

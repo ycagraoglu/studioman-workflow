@@ -34,11 +34,11 @@ export const NodeHeader: React.FC<NodeHeaderProps> = ({
           onChange={onDateChange} 
           disabled={!isActive}
         />
-        <button onClick={onToggleEditing} className="text-gray-400 hover:text-primary transition-colors">
+        <button onClick={onToggleEditing} className="text-gray-400 dark:text-slate-400 hover:text-primary transition-colors">
           {isEditing ? <Check className="w-4 h-4 text-emerald-500" /> : <Edit2 className="w-4 h-4" />}
         </button>
       </div>
-      <div className="flex items-center gap-1 text-gray-400 text-xs">
+      <div className="flex items-center gap-1 text-gray-400 dark:text-slate-400 text-xs">
         <TimePicker 
           value={startTime || '09:00'} 
           onChange={onStartTimeChange} 

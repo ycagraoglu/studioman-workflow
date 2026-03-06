@@ -38,7 +38,7 @@ export const FlowModals: React.FC<FlowModalsProps> = ({
             <div className="bg-gray-50 dark:bg-slate-700/50 px-6 py-4 flex justify-end gap-3">
               <button 
                 onClick={onCloseClearConfirm}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-slate-300 font-medium hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 Vazgeç
               </button>
@@ -60,13 +60,13 @@ export const FlowModals: React.FC<FlowModalsProps> = ({
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">Şablon Olarak Kaydet</h3>
-                <button onClick={onCloseTemplateModal} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <button onClick={onCloseTemplateModal} className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300">
                   <X className="w-6 h-6" />
                 </button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Şablon Adı</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Şablon Adı</label>
                   <input 
                     type="text"
                     value={templateName}
@@ -84,7 +84,7 @@ export const FlowModals: React.FC<FlowModalsProps> = ({
             <div className="bg-gray-50 dark:bg-slate-700/50 px-6 py-4 flex justify-end gap-3">
               <button 
                 onClick={onCloseTemplateModal}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-slate-300 font-medium hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 Vazgeç
               </button>

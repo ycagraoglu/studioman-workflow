@@ -127,7 +127,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               type="text" 
               value={data.title || ''} 
               onChange={(e) => logic.updateNodeData({ title: e.target.value })}
-              className="w-full text-base font-semibold text-gray-900 dark:text-white border-b border-gray-300 dark:border-zinc-700 focus:border-primary focus:outline-none mb-3 pb-1 bg-transparent"
+              className="w-full text-base font-semibold text-gray-900 dark:text-white border-b border-gray-300 dark:border-slate-600 focus:border-primary focus:outline-none mb-3 pb-1 bg-transparent"
               placeholder="İş Adı"
               autoFocus
             />
@@ -150,7 +150,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
 
             <button 
               onClick={() => openDrawer('addAsset', id)}
-              className="w-full flex items-center justify-center gap-2 py-2 mt-2 border-2 border-dashed border-gray-200 dark:border-zinc-800 rounded-lg text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-primary hover:border-primary-light hover:bg-primary-light dark:hover:bg-primary/10 transition-all"
+              className="w-full flex items-center justify-center gap-2 py-2 mt-2 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-lg text-xs font-medium text-gray-500 dark:text-slate-400 hover:text-primary hover:border-primary-light hover:bg-primary-light dark:hover:bg-primary/10 transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
               Kaynak Ekle
@@ -177,11 +177,11 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               onAttachmentClick={handleAttachmentClick}
             />
 
-            <div className="mt-3 pt-2 border-t border-gray-100 dark:border-zinc-800 flex items-center gap-2 justify-center">
+            <div className="mt-3 pt-2 border-t border-gray-100 dark:border-slate-700 flex items-center gap-2 justify-center">
               <button 
                 onClick={() => logic.setIsAddingNote(true)}
                 className={cn(
-                  "p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors",
+                  "p-1.5 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors",
                   (logic.isAddingNote || data.notes) && "text-primary bg-primary-light dark:bg-primary/10 hover:bg-primary-light/80 hover:text-primary"
                 )}
                 title="Not Ekle"
@@ -191,7 +191,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               <button 
                 onClick={() => logic.setIsAddingAttachment(true)}
                 className={cn(
-                  "p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors",
+                  "p-1.5 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors",
                   (logic.isAddingAttachment || (data.attachments && data.attachments.length > 0)) && "text-primary bg-primary-light dark:bg-primary/10 hover:bg-primary-light/80 hover:text-primary"
                 )}
                 title="Link Ekle"
@@ -200,7 +200,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               </button>
               <button 
                 onClick={() => logic.fileInputRef.current?.click()}
-                className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
                 title="Dosya Ekle"
               >
                 <Paperclip className="w-4 h-4" />

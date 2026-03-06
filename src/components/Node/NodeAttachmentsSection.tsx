@@ -36,9 +36,9 @@ export const NodeAttachmentsSection: React.FC<NodeAttachmentsSectionProps> = ({
   if (attachments.length === 0 && !isAddingAttachment) return null;
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-200/60">
+    <div className="mt-3 pt-3 border-t border-gray-200/60 dark:border-slate-600/60">
       <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-1.5 text-gray-500">
+        <div className="flex items-center gap-1.5 text-gray-500 dark:text-slate-400">
           <Paperclip className="w-3.5 h-3.5" />
           <span className="text-[10px] font-semibold tracking-wider">DOSYALAR / LİNKLER</span>
         </div>
@@ -49,7 +49,7 @@ export const NodeAttachmentsSection: React.FC<NodeAttachmentsSectionProps> = ({
               onSetNewAttachmentUrl('');
               onSetNewAttachmentName('');
             }}
-            className="text-gray-400 hover:text-red-500"
+            className="text-gray-400 dark:text-slate-400 hover:text-red-500"
           >
             <X className="w-3 h-3" />
           </button>
@@ -58,12 +58,12 @@ export const NodeAttachmentsSection: React.FC<NodeAttachmentsSectionProps> = ({
 
       <div className="space-y-1.5">
         {attachments.map(att => (
-          <div key={att.id} className="flex items-center justify-between bg-white border border-gray-200 rounded p-1.5 group">
+          <div key={att.id} className="flex items-center justify-between bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded p-1.5 group">
             <a 
               href={att.url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs text-blue-600 hover:underline truncate flex-1 min-w-0"
+              className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 hover:underline truncate flex-1 min-w-0"
               onClick={(e) => onAttachmentClick(e, att)}
             >
               {att.type === 'image' ? <ImageIcon className="w-3 h-3 flex-shrink-0" /> : 
@@ -76,7 +76,7 @@ export const NodeAttachmentsSection: React.FC<NodeAttachmentsSectionProps> = ({
                 e.stopPropagation();
                 onRemoveAttachment(att.id);
               }}
-              className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity ml-2 flex-shrink-0"
+              className="text-gray-400 dark:text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity ml-2 flex-shrink-0"
               title="Dosyayı Sil"
             >
               <X className="w-3 h-3" />
@@ -85,13 +85,13 @@ export const NodeAttachmentsSection: React.FC<NodeAttachmentsSectionProps> = ({
         ))}
 
         {isAddingAttachment && (
-          <div className="bg-gray-50 p-2 rounded border border-gray-200 space-y-2">
+          <div className="bg-gray-50 dark:bg-slate-700/50 p-2 rounded border border-gray-200 dark:border-slate-600 space-y-2">
             <input
               type="text"
               placeholder="Link Adı (Opsiyonel)"
               value={newAttachmentName}
               onChange={(e) => onSetNewAttachmentName(e.target.value)}
-              className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-indigo-500"
+              className="w-full text-xs border border-gray-200 dark:border-slate-600 rounded px-2 py-1 focus:outline-none focus:border-indigo-500 dark:bg-slate-800 dark:text-slate-200"
               autoFocus
             />
             <input
@@ -99,7 +99,7 @@ export const NodeAttachmentsSection: React.FC<NodeAttachmentsSectionProps> = ({
               placeholder="URL (https://...)"
               value={newAttachmentUrl}
               onChange={(e) => onSetNewAttachmentUrl(e.target.value)}
-              className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-indigo-500"
+              className="w-full text-xs border border-gray-200 dark:border-slate-600 rounded px-2 py-1 focus:outline-none focus:border-indigo-500 dark:bg-slate-800 dark:text-slate-200"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') onAddAttachment();
               }}

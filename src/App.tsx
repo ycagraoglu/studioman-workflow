@@ -31,7 +31,7 @@ function AppContent() {
         {/* Global Settings Trigger */}
         <button 
           onClick={() => setShowThemeSelector(true)}
-          className="fixed bottom-6 right-6 z-50 p-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-full shadow-xl hover:shadow-2xl hover:scale-110 transition-all text-gray-600 dark:text-gray-400"
+          className="fixed bottom-6 right-6 z-50 p-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-full shadow-xl hover:shadow-2xl hover:scale-110 transition-all text-gray-600 dark:text-slate-400"
           title="Görünüm Ayarları"
         >
           <Settings className="w-6 h-6" />
