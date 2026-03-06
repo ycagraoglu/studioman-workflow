@@ -1,11 +1,38 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-accent: var(--accent);
+}
+
+/* Support .dark class for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #eef2ff;
+  --accent: #6366f1;
+}
+
+/* Dark Mode Overrides */
+.dark body {
+  background-color: #1e293b; /* Slate 800 - Much lighter and softer than Zinc 900 */
+  color: #f1f5f9; /* Slate 100 */
+}
+
 /* DatePicker Theme Overrides */
 .rdp {
   --rdp-cell-size: 40px;
-  --rdp-accent-color: #4f46e5;
-  --rdp-background-color: #eef2ff;
+  --rdp-accent-color: var(--primary);
+  --rdp-background-color: var(--primary-light);
   margin: 0;
+}
+
+.dark .rdp {
+  --rdp-background-color: #18181b;
 }
 
 .rdp-day_selected, 

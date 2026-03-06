@@ -24,12 +24,12 @@ export const NodeActionBar: React.FC<NodeActionBarProps> = ({
   colors
 }) => {
   return (
-    <div className="absolute -top-10 left-0 flex items-center gap-1 opacity-0 group-hover/node:opacity-100 transition-opacity z-10 bg-white border border-gray-200 rounded-md shadow-sm p-1">
+    <div className="absolute -top-10 left-0 flex items-center gap-1 opacity-0 group-hover/node:opacity-100 transition-opacity z-10 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-md shadow-sm p-1">
       <button 
         onClick={onToggleActive}
         className={cn(
           "p-1.5 rounded transition-colors",
-          isActive ? "text-emerald-600 hover:bg-emerald-50" : "text-gray-400 hover:bg-gray-100 hover:text-gray-900"
+          isActive ? "text-emerald-600 dark:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10" : "text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-white"
         )} 
         title={isActive ? "Pasif Yap" : "Aktif Yap"}
       >
@@ -37,7 +37,7 @@ export const NodeActionBar: React.FC<NodeActionBarProps> = ({
       </button>
       <button 
         onClick={onDeleteClick}
-        className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors" 
+        className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded transition-colors" 
         title="Sil"
       >
         <Trash2 className="w-4 h-4" />
@@ -45,14 +45,14 @@ export const NodeActionBar: React.FC<NodeActionBarProps> = ({
       <div className="relative">
         <button 
           onClick={onColorPickerToggle}
-          className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors" 
+          className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 rounded transition-colors" 
           title="Renk Seç"
         >
           <Palette className="w-4 h-4" />
         </button>
         
         {showColorPicker && (
-          <div className="absolute top-full mt-1 left-0 bg-white border border-gray-200 shadow-lg rounded-lg p-2 flex gap-1 z-50">
+          <div className="absolute top-full mt-1 left-0 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-lg rounded-lg p-2 flex gap-1 z-50">
             {colors.map(c => (
               <button
                 key={c.id}
@@ -61,9 +61,9 @@ export const NodeActionBar: React.FC<NodeActionBarProps> = ({
                   onColorSelect(c.class);
                 }}
                 className={cn(
-                  "w-6 h-6 rounded-full border border-gray-200 hover:scale-110 transition-transform",
+                  "w-6 h-6 rounded-full border border-gray-200 dark:border-zinc-700 hover:scale-110 transition-transform",
                   c.class,
-                  currentColor === c.class ? "ring-2 ring-indigo-500 ring-offset-1" : ""
+                  currentColor === c.class ? "ring-2 ring-primary ring-offset-1 dark:ring-offset-zinc-900" : ""
                 )}
                 title="Renk Seç"
               />

@@ -14,13 +14,13 @@ import { NodeAttachmentsSection } from './Node/NodeAttachmentsSection';
 import FilePreviewModal from './FilePreviewModal';
 
 const COLORS = [
-  { id: 'white', class: 'bg-white' },
-  { id: 'blue', class: 'bg-blue-50' },
-  { id: 'emerald', class: 'bg-emerald-50' },
-  { id: 'amber', class: 'bg-amber-50' },
-  { id: 'purple', class: 'bg-purple-50' },
-  { id: 'pink', class: 'bg-pink-50' },
-  { id: 'rose', class: 'bg-rose-50' },
+  { id: 'white', class: 'bg-white dark:bg-slate-800' },
+  { id: 'blue', class: 'bg-blue-50 dark:bg-blue-900/20' },
+  { id: 'emerald', class: 'bg-emerald-50 dark:bg-emerald-900/20' },
+  { id: 'amber', class: 'bg-amber-50 dark:bg-amber-900/20' },
+  { id: 'purple', class: 'bg-purple-50 dark:bg-purple-900/20' },
+  { id: 'pink', class: 'bg-pink-50 dark:bg-pink-900/20' },
+  { id: 'rose', class: 'bg-rose-50 dark:bg-rose-900/20' },
 ];
 
 export default function CustomNode({ data, id, isConnectable, selected }: NodeProps<any>) {
@@ -30,12 +30,12 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
 
   const getNodeColor = () => {
     if (data.color) return data.color;
-    if (!data.assets || data.assets.length === 0) return 'bg-white';
+    if (!data.assets || data.assets.length === 0) return 'bg-white dark:bg-slate-800';
     const firstType = data.assets[0].type;
-    if (firstType === 'location') return 'bg-blue-50';
-    if (firstType === 'personnel') return 'bg-emerald-50';
-    if (firstType === 'equipment') return 'bg-amber-50';
-    return 'bg-white';
+    if (firstType === 'location') return 'bg-blue-50 dark:bg-blue-900/20';
+    if (firstType === 'personnel') return 'bg-emerald-50 dark:bg-emerald-900/20';
+    if (firstType === 'equipment') return 'bg-amber-50 dark:bg-amber-900/20';
+    return 'bg-white dark:bg-slate-800';
   };
 
   const conflicts = logic.validateNode(id, data.date, data.startTime, data.endTime);
@@ -91,8 +91,8 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
       <div className={cn(
         "w-64 rounded-xl shadow-md border-2 transition-all duration-200",
         getNodeColor(),
-        selected ? "border-indigo-500 shadow-lg" : "border-transparent",
-        hasConflict ? "border-red-500 bg-red-50" : ""
+        selected ? "border-primary shadow-lg" : "border-transparent",
+        hasConflict ? "border-red-500 bg-red-50 dark:bg-red-900/20" : ""
       )}>
         {hasConflict && (
           <div className="absolute -top-3 right-2 z-20 group/conflict">
@@ -107,7 +107,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
           </div>
         )}
 
-        <Handle type="target" position={Position.Left} isConnectable={isConnectable} className="w-3 h-3 bg-white border-2 border-gray-300" />
+        <Handle type="target" position={Position.Left} isConnectable={isConnectable} className="w-3 h-3 bg-white dark:bg-slate-700 border-2 border-gray-300 dark:border-slate-600" />
         
         <NodeHeader 
           date={data.date}
@@ -127,12 +127,12 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               type="text" 
               value={data.title || ''} 
               onChange={(e) => logic.updateNodeData({ title: e.target.value })}
-              className="w-full text-base font-semibold text-gray-900 border-b border-gray-300 focus:border-indigo-500 focus:outline-none mb-3 pb-1"
+              className="w-full text-base font-semibold text-gray-900 dark:text-white border-b border-gray-300 dark:border-zinc-700 focus:border-primary focus:outline-none mb-3 pb-1 bg-transparent"
               placeholder="İş Adı"
               autoFocus
             />
           ) : (
-            <h3 className="text-base font-semibold text-gray-900 mb-3">{data.title || 'Yeni İş'}</h3>
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">{data.title || 'Yeni İş'}</h3>
           )}
 
           <div className="space-y-3">
@@ -150,7 +150,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
 
             <button 
               onClick={() => openDrawer('addAsset', id)}
-              className="w-full flex items-center justify-center gap-2 py-2 mt-2 border-2 border-dashed border-gray-200 rounded-lg text-xs font-medium text-gray-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all"
+              className="w-full flex items-center justify-center gap-2 py-2 mt-2 border-2 border-dashed border-gray-200 dark:border-zinc-800 rounded-lg text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-primary hover:border-primary-light hover:bg-primary-light dark:hover:bg-primary/10 transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
               Kaynak Ekle
@@ -177,12 +177,12 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               onAttachmentClick={handleAttachmentClick}
             />
 
-            <div className="mt-3 pt-2 border-t border-gray-100 flex items-center gap-2 justify-center">
+            <div className="mt-3 pt-2 border-t border-gray-100 dark:border-zinc-800 flex items-center gap-2 justify-center">
               <button 
                 onClick={() => logic.setIsAddingNote(true)}
                 className={cn(
-                  "p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors",
-                  (logic.isAddingNote || data.notes) && "text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-600"
+                  "p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors",
+                  (logic.isAddingNote || data.notes) && "text-primary bg-primary-light dark:bg-primary/10 hover:bg-primary-light/80 hover:text-primary"
                 )}
                 title="Not Ekle"
               >
@@ -191,8 +191,8 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               <button 
                 onClick={() => logic.setIsAddingAttachment(true)}
                 className={cn(
-                  "p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors",
-                  (logic.isAddingAttachment || (data.attachments && data.attachments.length > 0)) && "text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-600"
+                  "p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors",
+                  (logic.isAddingAttachment || (data.attachments && data.attachments.length > 0)) && "text-primary bg-primary-light dark:bg-primary/10 hover:bg-primary-light/80 hover:text-primary"
                 )}
                 title="Link Ekle"
               >
@@ -200,7 +200,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
               </button>
               <button 
                 onClick={() => logic.fileInputRef.current?.click()}
-                className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 title="Dosya Ekle"
               >
                 <Paperclip className="w-4 h-4" />
@@ -215,7 +215,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
           </div>
         </div>
 
-        <Handle type="source" position={Position.Right} isConnectable={isConnectable} className="w-3 h-3 bg-white border-2 border-gray-300" />
+        <Handle type="source" position={Position.Right} isConnectable={isConnectable} className="w-3 h-3 bg-white dark:bg-slate-700 border-2 border-gray-300 dark:border-slate-600" />
         
         <div className="absolute top-1/2 -right-10 -translate-y-1/2 opacity-0 group-hover/node:opacity-100 transition-opacity z-10">
           <button 

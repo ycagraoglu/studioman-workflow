@@ -27,14 +27,14 @@ export const NodeHeader: React.FC<NodeHeaderProps> = ({
   onToggleEditing
 }) => {
   return (
-    <div className="p-3 border-b border-black/5 flex flex-col gap-2 bg-black/5 rounded-t-xl">
+    <div className="p-3 border-b border-black/5 dark:border-white/5 flex flex-col gap-2 bg-black/5 dark:bg-white/5 rounded-t-xl">
       <div className="flex justify-between items-center">
         <DatePicker 
           value={date} 
           onChange={onDateChange} 
           disabled={!isActive}
         />
-        <button onClick={onToggleEditing} className="text-gray-400 hover:text-indigo-600 transition-colors">
+        <button onClick={onToggleEditing} className="text-gray-400 hover:text-primary transition-colors">
           {isEditing ? <Check className="w-4 h-4 text-emerald-500" /> : <Edit2 className="w-4 h-4" />}
         </button>
       </div>

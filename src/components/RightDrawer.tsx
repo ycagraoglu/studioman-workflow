@@ -68,7 +68,7 @@ const ASSETS: Asset[] = [
 ];
 
 const DEFAULT_NODE_TYPES = [
-  { id: 'workstation', title: 'Boş İş (Workstation)', description: 'Yeni bir çalışma alanı oluşturun', iconName: 'PlusSquare', color: 'text-indigo-500' },
+  { id: 'workstation', title: 'Boş İş (Workstation)', description: 'Yeni bir çalışma alanı oluşturun', iconName: 'PlusSquare', color: 'text-primary' },
   { id: 'meeting', title: 'Toplantı', description: 'Ekip ile toplantı planlayın', iconName: 'Calendar', color: 'text-blue-500' },
   { id: 'shooting', title: 'Çekim', description: 'Fotoğraf/Video çekim aşaması', iconName: 'Play', color: 'text-emerald-500' },
 ];
@@ -323,16 +323,16 @@ export default function RightDrawer() {
       )}
 
       {nodeTypeToDelete && (
-        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/20 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">İş Tipini Sil</h3>
-            <p className="text-sm text-gray-500 mb-6">
+        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/20 dark:bg-black/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 p-6 max-w-sm w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">İş Tipini Sil</h3>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
               Bu iş tipini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
             </p>
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setNodeTypeToDelete(null)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
               >
                 İptal
               </button>
@@ -359,26 +359,26 @@ export default function RightDrawer() {
       {/* Drawer */}
       <div 
         className={cn(
-          "absolute top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col",
+          "absolute top-0 right-0 h-full w-full sm:w-[400px] bg-white dark:bg-slate-800 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="p-6 border-b border-gray-100 flex-shrink-0">
+        <div className="p-6 border-b border-gray-100 dark:border-slate-700 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               {mode === 'addAsset' && selectedCategory && selectedCategory !== 'vehicle' && (
                 <button 
                   onClick={() => setSelectedCategory(null)}
-                  className="p-1.5 hover:bg-gray-100 rounded-md transition-colors text-gray-500"
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors text-gray-500 dark:text-gray-400"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
               )}
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {mode === 'addNode' ? 'Ne eklemek istersiniz?' : getCategoryTitle(selectedCategory)}
               </h2>
             </div>
-            <button onClick={closeDrawer} className="text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+            <button onClick={closeDrawer} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1.5 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -390,7 +390,7 @@ export default function RightDrawer() {
               placeholder="Ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+              className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
           </div>
         </div>
@@ -406,14 +406,14 @@ export default function RightDrawer() {
                     <div key={nodeType.id} className="relative group/item">
                       <button
                         onClick={() => handleAddNode(nodeType.id, nodeType.title)}
-                        className="w-full flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors text-left group"
+                        className="w-full flex items-start gap-4 p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition-colors text-left group"
                       >
-                        <div className={cn("mt-0.5 p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:shadow transition-all", nodeType.color)}>
+                        <div className={cn("mt-0.5 p-2 bg-white dark:bg-slate-700 border border-gray-100 dark:border-slate-600 rounded-lg shadow-sm group-hover:shadow transition-all", nodeType.color)}>
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="pr-16">
-                          <div className="font-medium text-gray-900 text-sm">{nodeType.title}</div>
-                          <div className="text-xs text-gray-500 mt-0.5">{nodeType.description}</div>
+                          <div className="font-medium text-gray-900 dark:text-white text-sm">{nodeType.title}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{nodeType.description}</div>
                         </div>
                       </button>
                       {isCustom && (
@@ -427,7 +427,7 @@ export default function RightDrawer() {
                               setNewTypeIcon(nodeType.iconName);
                               setIsAddingNewType(true);
                             }}
-                            className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary-light dark:hover:bg-primary/10 rounded-md transition-colors"
                             title="Düzenle"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -437,7 +437,7 @@ export default function RightDrawer() {
                               e.stopPropagation();
                               setNodeTypeToDelete(nodeType.id);
                             }}
-                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition-colors"
                             title="Sil"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -448,49 +448,49 @@ export default function RightDrawer() {
                   );
                 })}
                 {filteredNodes.length === 0 && (
-                  <div className="text-center py-8 text-sm text-gray-500">
+                  <div className="text-center py-8 text-sm text-gray-500 dark:text-gray-400">
                     Sonuç bulunamadı.
                   </div>
                 )}
               </div>
 
-              <div className="mt-auto pt-4 border-t border-gray-100">
+              <div className="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
                 {isAddingNewType ? (
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-slate-600">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-900">{editingNodeId ? 'İş Tipini Düzenle' : 'Yeni İş Tipi Ekle'}</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{editingNodeId ? 'İş Tipini Düzenle' : 'Yeni İş Tipi Ekle'}</h3>
                       <button onClick={() => {
                         setIsAddingNewType(false);
                         setEditingNodeId(null);
                         setNewTypeTitle('');
                         setNewTypeDesc('');
-                      }} className="text-gray-400 hover:text-gray-600">
+                      }} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">İş Adı</label>
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">İş Adı</label>
                         <input 
                           type="text" 
                           value={newTypeTitle}
                           onChange={e => setNewTypeTitle(e.target.value)}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           placeholder="Örn: Kurgu"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Açıklama</label>
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Açıklama</label>
                         <input 
                           type="text" 
                           value={newTypeDesc}
                           onChange={e => setNewTypeDesc(e.target.value)}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           placeholder="Örn: Video montaj aşaması"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">İkon</label>
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">İkon</label>
                         <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-1">
                           {[
                             'Briefcase', 'Settings', 'FileText', 'CheckSquare', 'Users', 
@@ -508,7 +508,7 @@ export default function RightDrawer() {
                                 onClick={() => setNewTypeIcon(iconName)}
                                 className={cn(
                                   "p-2 rounded-md border transition-colors",
-                                  newTypeIcon === iconName ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
+                                  newTypeIcon === iconName ? "border-primary bg-primary-light dark:bg-primary/10 text-primary" : "border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-600"
                                 )}
                                 title={iconName}
                               >
@@ -534,7 +534,7 @@ export default function RightDrawer() {
                               title: newTypeTitle,
                               description: newTypeDesc,
                               iconName: newTypeIcon,
-                              color: 'text-indigo-500'
+                              color: 'text-primary'
                             }]);
                           }
                           setNewTypeTitle('');
@@ -543,7 +543,7 @@ export default function RightDrawer() {
                           setEditingNodeId(null);
                         }}
                         disabled={!newTypeTitle.trim()}
-                        className="w-full py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-2"
+                        className="w-full py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-2"
                       >
                         {editingNodeId ? 'Güncelle' : 'Ekle'}
                       </button>
@@ -558,7 +558,7 @@ export default function RightDrawer() {
                       setNewTypeIcon('Briefcase');
                       setIsAddingNewType(true);
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm font-medium text-gray-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-gray-200 dark:border-zinc-700 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary hover:border-primary-light hover:bg-primary-light dark:hover:bg-primary/10 transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     Yeni İş Tipi Oluştur
@@ -572,39 +572,39 @@ export default function RightDrawer() {
             <div className="space-y-1">
               <button
                 onClick={() => setSelectedCategory('location')}
-                className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors text-left group"
+                className="w-full flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition-colors text-left group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:shadow transition-all text-blue-500">
+                  <div className="p-2 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-lg shadow-sm group-hover:shadow transition-all text-blue-500">
                     <MapPin className="w-5 h-5" />
                   </div>
-                  <div className="font-medium text-gray-900 text-sm">Lokasyonlar</div>
+                  <div className="font-medium text-gray-900 dark:text-white text-sm">Lokasyonlar</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
               
               <button
                 onClick={() => setSelectedCategory('personnel')}
-                className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors text-left group"
+                className="w-full flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition-colors text-left group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:shadow transition-all text-emerald-500">
+                  <div className="p-2 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-lg shadow-sm group-hover:shadow transition-all text-emerald-500">
                     <User className="w-5 h-5" />
                   </div>
-                  <div className="font-medium text-gray-900 text-sm">Ekip</div>
+                  <div className="font-medium text-gray-900 dark:text-white text-sm">Ekip</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
               
               <button
                 onClick={() => setSelectedCategory('equipment')}
-                className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors text-left group"
+                className="w-full flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition-colors text-left group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:shadow transition-all text-amber-500">
+                  <div className="p-2 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-lg shadow-sm group-hover:shadow transition-all text-amber-500">
                     <Camera className="w-5 h-5" />
                   </div>
-                  <div className="font-medium text-gray-900 text-sm">Ekipmanlar</div>
+                  <div className="font-medium text-gray-900 dark:text-white text-sm">Ekipmanlar</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
@@ -617,10 +617,10 @@ export default function RightDrawer() {
                 <button
                   key={asset.id}
                   onClick={() => handleAddAsset(asset)}
-                  className="w-full flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors text-left group"
+                  className="w-full flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-lg transition-colors text-left group"
                 >
                   <div className={cn(
-                    "p-1.5 bg-white border border-gray-100 rounded-md shadow-sm group-hover:shadow transition-all",
+                    "p-1.5 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-md shadow-sm group-hover:shadow transition-all",
                     asset.type === 'location' ? "text-blue-500" :
                     asset.type === 'personnel' ? "text-emerald-500" : 
                     asset.type === 'vehicle' ? "text-amber-800" : "text-amber-500"
@@ -628,13 +628,13 @@ export default function RightDrawer() {
                     {renderIcon(asset.type)}
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900 text-sm">{asset.name}</div>
-                    <div className="text-xs text-gray-500">{asset.roleOrDetails}</div>
+                    <div className="font-medium text-gray-900 dark:text-white text-sm">{asset.name}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">{asset.roleOrDetails}</div>
                   </div>
                 </button>
               ))}
               {filteredAssets.length === 0 && (
-                <div className="text-center py-8 text-sm text-gray-500">
+                <div className="text-center py-8 text-sm text-gray-500 dark:text-gray-400">
                   Sonuç bulunamadı.
                 </div>
               )}

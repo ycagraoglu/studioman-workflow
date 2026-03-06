@@ -74,9 +74,9 @@ export default function CustomEdge({
               </button>
             </div>
           )}
-          <div className="opacity-0 hover:opacity-100 transition-opacity bg-white border border-gray-200 rounded-md shadow-sm p-1 flex items-center gap-1">
+          <div className="opacity-0 hover:opacity-100 transition-opacity bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-md shadow-sm p-1 flex items-center gap-1">
             <button 
-              className="p-1 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded transition-colors" 
+              className="p-1 text-gray-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 rounded transition-colors" 
               title="Araç Ata"
               onClick={(e) => {
                 e.stopPropagation();
@@ -86,7 +86,7 @@ export default function CustomEdge({
               <Car className="w-4 h-4" />
             </button>
             <button 
-              className="p-1 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors" 
+              className="p-1 text-gray-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded transition-colors" 
               title="Sil"
               onClick={onEdgeClick}
             >

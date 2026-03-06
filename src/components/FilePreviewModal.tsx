@@ -72,7 +72,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
   const renderContent = () => {
     if (file.type === 'image') {
       return (
-        <div className="flex items-center justify-center h-full bg-gray-100/50 rounded-lg overflow-hidden">
+        <div className="flex items-center justify-center h-full bg-gray-100/50 dark:bg-slate-900/50 rounded-lg overflow-hidden">
           <img 
             src={file.url} 
             alt={file.name} 
@@ -86,31 +86,31 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
 
     if (isPdf) {
       return (
-        <div className="w-full h-full bg-white rounded-lg overflow-hidden border border-gray-200 relative">
+        <div className="w-full h-full bg-white dark:bg-slate-800 rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700 relative">
           <object
             data={file.url}
             type="application/pdf"
             className="w-full h-full"
           >
-            <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-gray-50">
+            <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-slate-900/50">
               <p>PDF önizlemesi yüklenemedi.</p>
               <a 
                 href={file.url} 
                 download={file.name}
-                className="mt-2 text-indigo-600 hover:underline flex items-center gap-1"
+                className="mt-2 text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
               >
                 Dosyayı İndir <Download className="w-4 h-4" />
               </a>
             </div>
           </object>
           {/* Fallback/Overlay for blocked content */}
-          <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg border border-gray-200 text-sm flex items-center gap-2 z-10">
-            <span>Görüntülenemiyor mu?</span>
+          <div className="absolute bottom-4 right-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 text-sm flex items-center gap-2 z-10">
+            <span className="text-gray-600 dark:text-slate-300">Görüntülenemiyor mu?</span>
             <a 
               href={file.url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline font-medium flex items-center gap-1"
+              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium flex items-center gap-1"
             >
               Yeni sekmede aç <ExternalLink className="w-3 h-3" />
             </a>
@@ -123,7 +123,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
       // For PDFs and other files that can be previewed in iframe
       // Note: Some sites block iframe embedding (X-Frame-Options)
       return (
-        <div className="w-full h-full bg-white rounded-lg overflow-hidden border border-gray-200">
+        <div className="w-full h-full bg-white dark:bg-slate-800 rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700">
           <iframe 
             src={file.url} 
             className="w-full h-full" 
@@ -131,13 +131,13 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
             sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
           />
           {/* Fallback/Overlay for blocked content */}
-          <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg border border-gray-200 text-sm flex items-center gap-2">
-            <span>Görüntülenemiyor mu?</span>
+          <div className="absolute bottom-4 right-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 text-sm flex items-center gap-2">
+            <span className="text-gray-600 dark:text-slate-300">Görüntülenemiyor mu?</span>
             <a 
               href={file.url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline font-medium flex items-center gap-1"
+              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium flex items-center gap-1"
             >
               Yeni sekmede aç <ExternalLink className="w-3 h-3" />
             </a>
@@ -180,19 +180,19 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
           maxHeight: isMaximized ? '100vh' : 'calc(100vh - 40px)',
         }}
         className={cn(
-          "absolute bg-white shadow-2xl pointer-events-auto flex flex-col transition-[width,height] duration-200 ease-in-out",
-          isMaximized ? "rounded-none" : "rounded-xl border border-gray-200/50 ring-1 ring-black/5"
+          "absolute bg-white dark:bg-slate-800 shadow-2xl pointer-events-auto flex flex-col transition-[width,height] duration-200 ease-in-out",
+          isMaximized ? "rounded-none" : "rounded-xl border border-gray-200/50 dark:border-slate-700 ring-1 ring-black/5"
         )}
       >
         {/* Header */}
         <div 
-          className="modal-header h-10 flex items-center justify-between px-3 border-b border-gray-100 bg-gray-50/50 select-none cursor-grab active:cursor-grabbing"
+          className="modal-header h-10 flex items-center justify-between px-3 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-900/50 select-none cursor-grab active:cursor-grabbing"
           onMouseDown={handleMouseDown}
           onDoubleClick={() => setIsMaximized(!isMaximized)}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <GripHorizontal className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            <span className="text-sm font-medium text-gray-700 truncate">{file.name}</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-slate-200 truncate">{file.name}</span>
           </div>
           
           <div className="flex items-center gap-1 ml-2" onMouseDown={e => e.stopPropagation()}>
@@ -201,21 +201,21 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
               download={file.name}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors"
               title="İndir / Yeni Sekmede Aç"
             >
               <Download className="w-3.5 h-3.5" />
             </a>
             <button
               onClick={() => setIsMaximized(!isMaximized)}
-              className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors"
               title={isMaximized ? "Küçült" : "Tam Ekran"}
             >
               {isMaximized ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
               title="Kapat"
             >
               <X className="w-4 h-4" />
@@ -224,7 +224,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-hidden p-2 bg-white relative">
+        <div className="flex-1 overflow-hidden p-2 bg-white dark:bg-slate-800 relative">
           {renderContent()}
         </div>
       </div>

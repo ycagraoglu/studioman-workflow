@@ -57,8 +57,8 @@ export default function TimePicker({ value, onChange, disabled }: TimePickerProp
         }}
         className={cn(
           "flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors",
-          disabled ? "cursor-not-allowed opacity-70" : "hover:bg-gray-200 cursor-pointer",
-          isOpen ? "bg-indigo-50 text-indigo-700" : "text-gray-700"
+          disabled ? "cursor-not-allowed opacity-70" : "hover:bg-gray-200 dark:hover:bg-slate-700 cursor-pointer",
+          isOpen ? "bg-primary/10 text-primary" : "text-gray-700 dark:text-gray-300"
         )}
       >
         <Clock className="w-3.5 h-3.5" />
@@ -66,12 +66,12 @@ export default function TimePicker({ value, onChange, disabled }: TimePickerProp
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden nodrag cursor-default">
-          <div className="flex border-b border-gray-100">
+        <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 z-50 overflow-hidden nodrag cursor-default">
+          <div className="flex border-b border-gray-100 dark:border-slate-700">
             <button
               className={cn(
                 "flex-1 py-2 text-xs font-medium transition-colors",
-                view === 'hours' ? "bg-indigo-50 text-indigo-700 border-b-2 border-indigo-500" : "text-gray-500 hover:bg-gray-50"
+                view === 'hours' ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
               )}
               onClick={(e) => { e.stopPropagation(); setView('hours'); }}
             >
@@ -80,7 +80,7 @@ export default function TimePicker({ value, onChange, disabled }: TimePickerProp
             <button
               className={cn(
                 "flex-1 py-2 text-xs font-medium transition-colors",
-                view === 'minutes' ? "bg-indigo-50 text-indigo-700 border-b-2 border-indigo-500" : "text-gray-500 hover:bg-gray-50"
+                view === 'minutes' ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
               )}
               onClick={(e) => { e.stopPropagation(); setView('minutes'); }}
             >
@@ -98,8 +98,8 @@ export default function TimePicker({ value, onChange, disabled }: TimePickerProp
                     className={cn(
                       "p-1.5 text-xs rounded-md transition-colors flex items-center justify-center",
                       currentHour === h 
-                        ? "bg-indigo-500 text-white font-medium shadow-sm" 
-                        : "text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
+                        ? "bg-primary text-white font-medium shadow-sm" 
+                        : "text-gray-700 dark:text-gray-300 hover:bg-primary/10 hover:text-primary"
                     )}
                   >
                     {h}
@@ -115,8 +115,8 @@ export default function TimePicker({ value, onChange, disabled }: TimePickerProp
                     className={cn(
                       "py-2 text-sm rounded-md transition-colors flex items-center justify-center",
                       currentMinute === m 
-                        ? "bg-indigo-500 text-white font-medium shadow-sm" 
-                        : "text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
+                        ? "bg-primary text-white font-medium shadow-sm" 
+                        : "text-gray-700 dark:text-gray-300 hover:bg-primary/10 hover:text-primary"
                     )}
                   >
                     {m}

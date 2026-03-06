@@ -115,8 +115,8 @@ function Flow({ workflowId, onBack }: FlowProps) {
 
   if (isLoading) {
     return (
-      <div className="flex-grow h-full flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+      <div className="flex-grow h-full flex items-center justify-center bg-gray-50 dark:bg-slate-800">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
       </div>
     );
   }
@@ -136,19 +136,19 @@ function Flow({ workflowId, onBack }: FlowProps) {
         fitView
         fitViewOptions={{ maxZoom: 1, minZoom: 0.1 }}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        className="bg-gray-100"
+        className="bg-gray-100 dark:bg-slate-800"
       >
         <Background 
           variant={BackgroundVariant.Dots} 
           gap={24} 
           size={1.5} 
           color="#9ca3af" 
-          bgColor="#f3f4f6"
+          bgColor="transparent"
         />
         
         {showMiniMap && (
           <MiniMap 
-            className="bg-white border border-gray-200 rounded-lg shadow-sm !bottom-4 !right-4"
+            className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm !bottom-4 !right-4"
             nodeColor={(node) => {
               if (node.type === 'addStep') return '#e5e7eb';
               const color = node.data?.color as string;

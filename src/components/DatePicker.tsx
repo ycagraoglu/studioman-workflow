@@ -110,18 +110,18 @@ export default function DatePicker({
         }}
         className={cn(
           "flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all text-sm font-medium w-full",
-          disabled ? "cursor-not-allowed opacity-50 bg-gray-50 border-gray-200" : "hover:border-indigo-300 bg-gray-50 border-gray-200 cursor-pointer",
-          isOpen ? "border-indigo-500 ring-2 ring-indigo-500/10 text-indigo-700 bg-white" : "text-gray-700",
-          !hasValue && "text-gray-400"
+          disabled ? "cursor-not-allowed opacity-50 bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700" : "hover:border-primary/50 bg-gray-50 dark:bg-slate-700/50 border-gray-200 dark:border-slate-700 cursor-pointer",
+          isOpen ? "border-primary ring-2 ring-primary/10 text-primary bg-white dark:bg-slate-800" : "text-gray-700 dark:text-gray-300",
+          !hasValue && "text-gray-400 dark:text-gray-500"
         )}
       >
-        <CalendarIcon className={cn("w-4 h-4 shrink-0", hasValue ? "text-indigo-500" : "text-gray-400")} />
+        <CalendarIcon className={cn("w-4 h-4 shrink-0", hasValue ? "text-primary" : "text-gray-400 dark:text-gray-500")} />
         <span className="flex-1 text-left truncate">
           {getLabel()}
         </span>
         {showClear && hasValue && (
           <X 
-            className="w-4 h-4 text-gray-400 hover:text-red-500 transition-colors" 
+            className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors" 
             onClick={handleClear}
           />
         )}
@@ -129,14 +129,14 @@ export default function DatePicker({
 
       {isOpen && (
         <div className={cn(
-          "absolute top-full left-0 mt-2 z-[100] bg-white rounded-xl shadow-2xl border border-gray-200 p-3 animate-in fade-in zoom-in duration-200 origin-top-left nodrag",
+          "absolute top-full left-0 mt-2 z-[100] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 p-3 animate-in fade-in zoom-in duration-200 origin-top-left nodrag",
           mode === 'range' && "min-w-[320px]"
         )}>
           <style>{`
             .rdp {
               --rdp-cell-size: 40px;
-              --rdp-accent-color: #4f46e5;
-              --rdp-background-color: #eef2ff;
+              --rdp-accent-color: var(--primary);
+              --rdp-background-color: var(--primary-light);
               margin: 0;
             }
             .rdp-day_selected, .rdp-day_selected:focus-visible, .rdp-day_selected:hover {
@@ -181,10 +181,22 @@ export default function DatePicker({
             .rdp-nav_button:hover {
               background-color: #f3f4f6;
             }
+            .dark .rdp-nav_button:hover {
+              background-color: #334155;
+            }
             .rdp-caption_label {
               font-size: 0.875rem;
               font-weight: 600;
               color: #111827;
+            }
+            .dark .rdp-caption_label {
+              color: #f1f5f9;
+            }
+            .dark .rdp-day {
+              color: #94a3b8;
+            }
+            .dark .rdp-day_selected {
+              color: white;
             }
           `}</style>
           <DayPicker
@@ -195,16 +207,16 @@ export default function DatePicker({
             showOutsideDays
             className="border-none"
           />
-          <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between">
+          <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-700 flex justify-between">
             <button 
               onClick={(e) => { e.stopPropagation(); handleSelect(new Date()); }}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 px-2 py-1 rounded hover:bg-indigo-50 transition-colors"
+              className="text-xs font-medium text-primary hover:text-primary-hover px-2 py-1 rounded hover:bg-primary-light dark:hover:bg-primary/10 transition-colors"
             >
               Bugün
             </button>
             <button 
               onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
-              className="text-xs font-medium text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+              className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
             >
               Kapat
             </button>
