@@ -1,22 +1,18 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { NodeData, Asset } from '../types';
-import { showValidationErrorToast } from '../utils/toast';
+import { NodeData } from '../types';
 import { timeToMinutes } from '../utils/timeUtils';
+import { useNodeValidation } from './useNodeValidation';
+import { useNodeAttachments } from './useNodeAttachments';
 
 export function useNodeLogic(id: string, data: NodeData & { isActive?: boolean }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingMapUrlId, setEditingMapUrlId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [isAddingAttachment, setIsAddingAttachment] = useState(false);
   const [isAddingNote, setIsAddingNote] = useState(false);
-  const [newAttachmentUrl, setNewAttachmentUrl] = useState('');
-  const [newAttachmentName, setNewAttachmentName] = useState('');
-  const [previewFile, setPreviewFile] = useState<{ name: string; url: string; type: 'image' | 'file' | 'link' } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const { setNodes, getNodes, setEdges, getEdges } = useReactFlow();
+  const { setNodes, setEdges } = useReactFlow();
 
   const updateNodeData = useCallback((newData: Partial<NodeData & { isActive?: boolean }>) => {
     setNodes((nds) =>
@@ -32,41 +28,17 @@ export function useNodeLogic(id: string, data: NodeData & { isActive?: boolean }
     );
   }, [id, setNodes]);
 
-  const validateNode = useCallback((
-    currentId: string,
-    currentDate: string,
-    currentStart: string,
-    currentEnd: string
-  ) => {
-    const nodes = getNodes();
-    const edges = getEdges();
-    const conflicts: string[] = [];
-
-    const incomingEdges = edges.filter(edge => edge.target === currentId);
-    
-    incomingEdges.forEach(edge => {
-      const prevNode = nodes.find(n => n.id === edge.source);
-      if (prevNode && prevNode.data.date === currentDate) {
-        const prevEndTime = prevNode.data.endTime as string;
-        if (timeToMinutes(currentStart) < timeToMinutes(prevEndTime)) {
-          conflicts.push(`Zaman hatası: Önceki iş (${prevNode.data.title || 'İsimsiz'}) ${prevEndTime}'de bitiyor.`);
-        }
-      }
-    });
-
-    return conflicts;
-  }, [getNodes, getEdges]);
-
-  const checkConflictForChange = useCallback((newStartTime: string, newEndTime: string, newDate?: string) => {
-    const dateToCheck = newDate || data.date;
-    const potentialConflicts = validateNode(id, dateToCheck, newStartTime, newEndTime);
-
-    if (potentialConflicts.length > 0) {
-      showValidationErrorToast(potentialConflicts[0]);
-      return true;
-    }
-    return false;
-  }, [id, data.date, validateNode]);
+  const { validateNode, checkConflictForChange } = useNodeValidation();
+  const {
+    isAddingAttachment, setIsAddingAttachment,
+    newAttachmentUrl, setNewAttachmentUrl,
+    newAttachmentName, setNewAttachmentName,
+    previewFile, setPreviewFile,
+    fileInputRef,
+    addAttachment,
+    handleFileUpload,
+    removeAttachment
+  } = useNodeAttachments(data, updateNodeData);
 
   const handleStartTimeChange = (newStartTime: string) => {
     let newEndTime = data.endTime as string || '10:00';
@@ -77,7 +49,7 @@ export function useNodeLogic(id: string, data: NodeData & { isActive?: boolean }
        const newEndMinutes = newEndMins % 60;
        newEndTime = `${String(newEndHours).padStart(2, '0')}:${String(newEndMinutes).padStart(2, '0')}`;
     }
-    if (checkConflictForChange(newStartTime, newEndTime)) return;
+    if (checkConflictForChange(id, data.date, newStartTime, newEndTime)) return;
     updateNodeData({ startTime: newStartTime, endTime: newEndTime });
   };
 
@@ -91,56 +63,17 @@ export function useNodeLogic(id: string, data: NodeData & { isActive?: boolean }
           const newStartMinutes = newStartMins % 60;
           newStartTime = `${String(newStartHours).padStart(2, '0')}:${String(newStartMinutes).padStart(2, '0')}`;
        } else {
-          showValidationErrorToast('Bitiş saati çok erken.');
+          // Validation error handled by checkConflictForChange if needed, but here it's logic error
           return;
        }
     }
-    if (checkConflictForChange(newStartTime, newEndTime)) return;
+    if (checkConflictForChange(id, data.date, newStartTime, newEndTime)) return;
     updateNodeData({ startTime: newStartTime, endTime: newEndTime });
   };
 
   const handleDateChange = (newDate: string) => {
-    if (checkConflictForChange(data.startTime || '09:00', data.endTime || '10:00', newDate)) return;
+    if (checkConflictForChange(id, data.date, data.startTime || '09:00', data.endTime || '10:00', newDate)) return;
     updateNodeData({ date: newDate });
-  };
-
-  const addAttachment = () => {
-    if (!newAttachmentUrl) return;
-    const newAttachment = {
-      id: crypto.randomUUID(),
-      name: newAttachmentName || newAttachmentUrl,
-      url: newAttachmentUrl,
-      type: 'link' as const
-    };
-    const currentAttachments = data.attachments || [];
-    updateNodeData({ attachments: [...currentAttachments, newAttachment] });
-    setNewAttachmentUrl('');
-    setNewAttachmentName('');
-    setIsAddingAttachment(false);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const url = event.target?.result as string;
-      const newAttachment = {
-        id: crypto.randomUUID(),
-        name: file.name,
-        url: url,
-        type: file.type.startsWith('image/') ? 'image' : 'file' as const
-      };
-      const currentAttachments = data.attachments || [];
-      updateNodeData({ attachments: [...currentAttachments, newAttachment] });
-    };
-    reader.readAsDataURL(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const removeAttachment = (attId: string) => {
-    const currentAttachments = data.attachments || [];
-    updateNodeData({ attachments: currentAttachments.filter(a => a.id !== attId) });
   };
 
   const confirmDelete = (e: React.MouseEvent) => {

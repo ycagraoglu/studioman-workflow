@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
   Background,
   BackgroundVariant,
-  MiniMap,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,10 +13,12 @@ import RightDrawer from './RightDrawer';
 import CustomEdge from './CustomEdge';
 import { Loader2 } from 'lucide-react';
 import { useDrawer } from '../contexts/DrawerContext';
-import { showSuccessToast } from '../utils/toast';
 import { useFlowLogic } from '../hooks/useFlowLogic';
+import { useTemplates } from '../hooks/useTemplates';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { FlowControls } from './Flow/FlowControls';
 import { FlowModals } from './Flow/FlowModals';
+import { CustomMiniMap } from './Flow/CustomMiniMap';
 
 const nodeTypes = {
   workstation: CustomNode,
@@ -44,25 +45,17 @@ function Flow({ workflowId, onBack }: FlowProps) {
 
   const { openDrawer, isOpen, closeDrawer } = useDrawer();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [templateName, setTemplateName] = useState('');
   const [showMiniMap, setShowMiniMap] = useState(true);
 
-  const handleSaveTemplate = () => {
-    if (!templateName.trim()) return;
-    const templates = JSON.parse(localStorage.getItem('workflowTemplates') || '[]');
-    templates.push({
-      id: uuidv4(),
-      name: templateName,
-      nodes,
-      edges,
-      createdAt: new Date().toISOString()
-    });
-    localStorage.setItem('workflowTemplates', JSON.stringify(templates));
-    setShowTemplateModal(false);
-    setTemplateName('');
-    showSuccessToast('Başarılı', 'Şablon başarıyla kaydedildi!');
-  };
+  const {
+    showTemplateModal,
+    setShowTemplateModal,
+    templateName,
+    setTemplateName,
+    handleSaveTemplate
+  } = useTemplates(nodes, edges);
+
+  useKeyboardShortcuts(onDuplicate);
 
   const confirmClear = useCallback(() => {
     setNodes([{
@@ -74,18 +67,6 @@ function Flow({ workflowId, onBack }: FlowProps) {
     setEdges([]);
     setShowClearConfirm(false);
   }, [setNodes, setEdges]);
-
-  // Handle keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        onDuplicate();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onDuplicate]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -146,23 +127,7 @@ function Flow({ workflowId, onBack }: FlowProps) {
           bgColor="transparent"
         />
         
-        {showMiniMap && (
-          <MiniMap 
-            className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm !bottom-4 !right-4"
-            nodeColor={(node) => {
-              if (node.type === 'addStep') return '#e5e7eb';
-              const color = node.data?.color as string;
-              if (color?.includes('blue')) return '#bfdbfe';
-              if (color?.includes('emerald')) return '#a7f3d0';
-              if (color?.includes('amber')) return '#fde68a';
-              if (color?.includes('purple')) return '#e9d5ff';
-              if (color?.includes('pink')) return '#fbcfe8';
-              if (color?.includes('rose')) return '#fecdd3';
-              return '#f3f4f6';
-            }}
-            maskColor="rgba(243, 244, 246, 0.6)"
-          />
-        )}
+        <CustomMiniMap showMiniMap={showMiniMap} />
 
         <FlowControls 
           onBack={onBack}

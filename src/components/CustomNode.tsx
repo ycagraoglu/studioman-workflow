@@ -1,16 +1,18 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { NodeData, Asset } from '../types';
-import { Plus, AlertTriangle, FileText, Link as LinkIcon, Paperclip } from 'lucide-react';
+import { Plus, FileText, Link as LinkIcon, Paperclip } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useDrawer } from '../contexts/DrawerContext';
 import { useNodeLogic } from '../hooks/useNodeLogic';
+import { useAttachmentHandler } from '../hooks/useAttachmentHandler';
 import { NodeActionBar } from './Node/NodeActionBar';
 import { NodeDeleteConfirm } from './Node/NodeDeleteConfirm';
 import { NodeHeader } from './Node/NodeHeader';
 import { NodeAssetSection } from './Node/NodeAssetSection';
 import { NodeNotesSection } from './Node/NodeNotesSection';
 import { NodeAttachmentsSection } from './Node/NodeAttachmentsSection';
+import { NodeConflictIndicator } from './Node/NodeConflictIndicator';
 import FilePreviewModal from './FilePreviewModal';
 
 const COLORS = [
@@ -26,6 +28,7 @@ const COLORS = [
 export default function CustomNode({ data, id, isConnectable, selected }: NodeProps<any>) {
   const logic = useNodeLogic(id, data);
   const { openDrawer } = useDrawer();
+  const { handleAttachmentClick } = useAttachmentHandler(logic.setPreviewFile);
   const isActive = data.isActive !== false;
 
   const getNodeColor = () => {
@@ -40,33 +43,6 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
 
   const conflicts = logic.validateNode(id, data.date, data.startTime, data.endTime);
   const hasConflict = conflicts.length > 0;
-
-  const handleAttachmentClick = (e: React.MouseEvent, att: { name: string; url: string; type: 'image' | 'file' | 'link' }) => {
-    e.stopPropagation();
-    if (att.type === 'image') {
-      e.preventDefault();
-      logic.setPreviewFile(att);
-    } else if (att.url.startsWith('data:')) {
-      e.preventDefault();
-      const newWin = window.open('', '_blank');
-      if (newWin) {
-        newWin.document.write('<!DOCTYPE html><html><head><title>Yükleniyor...</title></head><body><p>Dosya hazırlanıyor, lütfen bekleyin...</p></body></html>');
-        fetch(att.url)
-          .then(res => res.blob())
-          .then(blob => {
-            const blobUrl = URL.createObjectURL(blob);
-            newWin.location.href = blobUrl;
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-          })
-          .catch(err => {
-             console.error("Failed to load data URL:", err);
-             newWin.document.body.innerHTML = '<p style="color:red">Dosya yüklenirken bir hata oluştu.</p>';
-          });
-      } else {
-          alert('Lütfen açılır pencerelere izin verin.');
-      }
-    }
-  };
 
   return (
     <div className={cn("relative group/node", !isActive && "opacity-50 grayscale")}>
@@ -94,18 +70,7 @@ export default function CustomNode({ data, id, isConnectable, selected }: NodePr
         selected ? "border-primary shadow-lg" : "border-transparent dark:border-slate-700",
         hasConflict ? "border-red-500 bg-red-50 dark:bg-red-900/20" : ""
       )}>
-        {hasConflict && (
-          <div className="absolute -top-3 right-2 z-20 group/conflict">
-            <div className="bg-red-500 text-white p-1 rounded-full shadow-md animate-pulse">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-            <div className="absolute top-full right-0 mt-1 w-48 bg-red-600 text-white text-xs p-2 rounded shadow-lg opacity-0 group-hover/conflict:opacity-100 transition-opacity pointer-events-none z-30">
-              {conflicts.map((conflict, i) => (
-                <div key={i} className="mb-1 last:mb-0">{conflict}</div>
-              ))}
-            </div>
-          </div>
-        )}
+        <NodeConflictIndicator conflicts={conflicts} />
 
         <Handle type="target" position={Position.Left} isConnectable={isConnectable} className="w-3 h-3 bg-white dark:bg-slate-700 border-2 border-gray-300 dark:border-slate-600" />
         
