@@ -278,6 +278,9 @@ export default function RightDrawer() {
         })
       );
     }
+    if (asset.type === 'vehicle') {
+      closeDrawer();
+    }
     // Don't close drawer immediately so they can add multiple
   };
 
@@ -356,14 +359,14 @@ export default function RightDrawer() {
       {/* Drawer */}
       <div 
         className={cn(
-          "absolute top-0 right-0 h-full w-[400px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col",
+          "absolute top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
         <div className="p-6 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              {mode === 'addAsset' && selectedCategory && (
+              {mode === 'addAsset' && selectedCategory && selectedCategory !== 'vehicle' && (
                 <button 
                   onClick={() => setSelectedCategory(null)}
                   className="p-1.5 hover:bg-gray-100 rounded-md transition-colors text-gray-500"

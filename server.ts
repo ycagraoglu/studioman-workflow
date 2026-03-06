@@ -114,6 +114,43 @@ async function startServer() {
     }
   });
 
+  app.get("/api/analytics/asset-usage", (req, res) => {
+    try {
+      const allNodes = db.prepare(`
+        SELECT 
+          n.id as nodeId,
+          n.workflow_id as workflowId,
+          w.name as workflowName,
+          n.data as nodeData
+        FROM nodes n
+        JOIN workflows w ON n.workflow_id = w.id
+      `).all();
+
+      const usage = allNodes.flatMap((n: any) => {
+        const data = JSON.parse(n.nodeData);
+        const assets = data.assets || [];
+        return assets.map((asset: any) => ({
+          assetId: asset.id,
+          assetName: asset.name,
+          assetType: asset.type,
+          assetRole: asset.roleOrDetails,
+          workflowId: n.workflowId,
+          workflowName: n.workflowName,
+          nodeId: n.nodeId,
+          nodeTitle: data.title,
+          date: data.date,
+          startTime: data.startTime,
+          endTime: data.endTime
+        }));
+      });
+
+      res.json(usage);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch asset usage" });
+    }
+  });
+
   app.delete("/api/workflows/:id", (req, res) => {
     const { id } = req.params;
     try {

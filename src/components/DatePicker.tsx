@@ -1,38 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '../utils/cn';
-import { 
-  format, 
-  parseISO, 
-  addMonths, 
-  subMonths, 
-  startOfMonth, 
-  endOfMonth, 
-  eachDayOfInterval, 
-  isSameMonth, 
-  isSameDay, 
-  startOfWeek, 
-  endOfWeek,
-  isBefore,
-  startOfDay
-} from 'date-fns';
+import { format, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { DayPicker, DateRange } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
 interface DatePickerProps {
-  value?: string;
-  onChange: (date: string) => void;
+  value?: string | { from: string; to: string };
+  onChange: (date: any) => void;
   disabled?: boolean;
+  placeholder?: string;
+  className?: string;
+  showClear?: boolean;
+  mode?: 'single' | 'range';
 }
 
-export default function DatePicker({ value, onChange, disabled }: DatePickerProps) {
+export default function DatePicker({ 
+  value, 
+  onChange, 
+  disabled, 
+  placeholder = 'Tarih Seç',
+  className,
+  showClear = false,
+  mode = 'single'
+}: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   
-  const today = new Date();
-  const todayStart = startOfDay(today);
-  const currentValue = value ? parseISO(value) : today;
-  
-  const [currentMonth, setCurrentMonth] = useState(startOfMonth(currentValue));
+  const selectedDate = mode === 'single' 
+    ? (value && typeof value === 'string' ? parseISO(value) : undefined)
+    : (value && typeof value === 'object' ? { 
+        from: value.from ? parseISO(value.from) : undefined, 
+        to: value.to ? parseISO(value.to) : undefined 
+      } : undefined);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -47,116 +48,166 @@ export default function DatePicker({ value, onChange, disabled }: DatePickerProp
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  const handleDateClick = (date: Date) => {
-    onChange(format(date, 'yyyy-MM-dd'));
+  const handleSelect = (date: any) => {
+    if (mode === 'single') {
+      if (date instanceof Date) {
+        onChange(format(date, 'yyyy-MM-dd'));
+        setIsOpen(false);
+      }
+    } else {
+      const range = date as DateRange;
+      if (range) {
+        onChange({
+          from: range.from ? format(range.from, 'yyyy-MM-dd') : '',
+          to: range.to ? format(range.to, 'yyyy-MM-dd') : ''
+        });
+        // Don't close immediately in range mode until both are selected or user clicks away
+        if (range.from && range.to) {
+          // Optional: close after a small delay or keep open
+        }
+      } else {
+        onChange({ from: '', to: '' });
+      }
+    }
+  };
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (mode === 'single') {
+      onChange('');
+    } else {
+      onChange({ from: '', to: '' });
+    }
     setIsOpen(false);
   };
 
-  const nextMonth = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentMonth(addMonths(currentMonth, 1));
+  const getLabel = () => {
+    if (mode === 'single') {
+      return value && typeof value === 'string' 
+        ? format(parseISO(value), 'd MMM yyyy', { locale: tr }) 
+        : placeholder;
+    } else {
+      const range = value as { from: string; to: string };
+      if (range?.from && range?.to) {
+        return `${format(parseISO(range.from), 'd MMM', { locale: tr })} - ${format(parseISO(range.to), 'd MMM yyyy', { locale: tr })}`;
+      } else if (range?.from) {
+        return `${format(parseISO(range.from), 'd MMM yyyy', { locale: tr })} - ...`;
+      }
+      return placeholder;
+    }
   };
 
-  const prevMonth = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentMonth(subMonths(currentMonth, 1));
-  };
-
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(monthStart);
-  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Monday
-  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 }); // Sunday
-
-  const dateFormat = "dd.MM.yyyy";
-  const days = eachDayOfInterval({
-    start: startDate,
-    end: endDate
-  });
-
-  const weekDays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+  const hasValue = mode === 'single' ? !!value : (!!(value as any)?.from);
 
   return (
-    <div className="relative" ref={popoverRef}>
+    <div className={cn("relative", className)} ref={popoverRef}>
       <button
         type="button"
         disabled={disabled}
         onClick={(e) => {
           e.stopPropagation();
-          if (!disabled) {
-            setIsOpen(!isOpen);
-            if (!isOpen) {
-              setCurrentMonth(startOfMonth(value ? parseISO(value) : today));
-            }
-          }
+          if (!disabled) setIsOpen(!isOpen);
         }}
         className={cn(
-          "flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors",
-          disabled ? "cursor-not-allowed opacity-70" : "hover:bg-gray-200 cursor-pointer",
-          isOpen ? "bg-indigo-50 text-indigo-700" : "text-gray-700"
+          "flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all text-sm font-medium w-full",
+          disabled ? "cursor-not-allowed opacity-50 bg-gray-50 border-gray-200" : "hover:border-indigo-300 bg-gray-50 border-gray-200 cursor-pointer",
+          isOpen ? "border-indigo-500 ring-2 ring-indigo-500/10 text-indigo-700 bg-white" : "text-gray-700",
+          !hasValue && "text-gray-400"
         )}
       >
-        <CalendarIcon className="w-3.5 h-3.5" />
-        <span className="text-sm font-medium">
-          {value ? format(parseISO(value), dateFormat) : format(today, dateFormat)}
+        <CalendarIcon className={cn("w-4 h-4 shrink-0", hasValue ? "text-indigo-500" : "text-gray-400")} />
+        <span className="flex-1 text-left truncate">
+          {getLabel()}
         </span>
+        {showClear && hasValue && (
+          <X 
+            className="w-4 h-4 text-gray-400 hover:text-red-500 transition-colors" 
+            onClick={handleClear}
+          />
+        )}
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden nodrag cursor-default p-3">
-          <div className="flex items-center justify-between mb-4">
-            <button
-              onClick={prevMonth}
-              className="p-1 hover:bg-gray-100 rounded-md text-gray-500 transition-colors"
+        <div className={cn(
+          "absolute top-full left-0 mt-2 z-[100] bg-white rounded-xl shadow-2xl border border-gray-200 p-3 animate-in fade-in zoom-in duration-200 origin-top-left nodrag",
+          mode === 'range' && "min-w-[320px]"
+        )}>
+          <style>{`
+            .rdp {
+              --rdp-cell-size: 40px;
+              --rdp-accent-color: #4f46e5;
+              --rdp-background-color: #eef2ff;
+              margin: 0;
+            }
+            .rdp-day_selected, .rdp-day_selected:focus-visible, .rdp-day_selected:hover {
+              background-color: var(--rdp-accent-color);
+              color: white;
+              font-weight: 600;
+              border-radius: 8px;
+            }
+            .rdp-day_range_middle {
+              background-color: var(--rdp-background-color);
+              color: var(--rdp-accent-color);
+              border-radius: 0;
+            }
+            .rdp-day_range_start {
+              border-top-right-radius: 0;
+              border-bottom-right-radius: 0;
+            }
+            .rdp-day_range_end {
+              border-top-left-radius: 0;
+              border-bottom-left-radius: 0;
+            }
+            .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+              background-color: var(--rdp-background-color);
+              border-radius: 8px;
+            }
+            .rdp-day_today {
+              color: var(--rdp-accent-color);
+              font-weight: 800;
+              text-decoration: underline;
+              text-underline-offset: 4px;
+            }
+            .rdp-head_cell {
+              font-size: 0.75rem;
+              font-weight: 600;
+              color: #6b7280;
+              text-transform: uppercase;
+            }
+            .rdp-nav_button {
+              color: #4b5563;
+              border-radius: 6px;
+            }
+            .rdp-nav_button:hover {
+              background-color: #f3f4f6;
+            }
+            .rdp-caption_label {
+              font-size: 0.875rem;
+              font-weight: 600;
+              color: #111827;
+            }
+          `}</style>
+          <DayPicker
+            mode={mode as any}
+            selected={selectedDate as any}
+            onSelect={handleSelect}
+            locale={tr}
+            showOutsideDays
+            className="border-none"
+          />
+          <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between">
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleSelect(new Date()); }}
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 px-2 py-1 rounded hover:bg-indigo-50 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4" />
+              Bugün
             </button>
-            <div className="text-sm font-semibold text-gray-900 capitalize">
-              {format(currentMonth, 'MMMM yyyy', { locale: tr })}
-            </div>
-            <button
-              onClick={nextMonth}
-              className="p-1 hover:bg-gray-100 rounded-md text-gray-500 transition-colors"
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+              className="text-xs font-medium text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
             >
-              <ChevronRight className="w-4 h-4" />
+              Kapat
             </button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-1 mb-2">
-            {weekDays.map((day) => (
-              <div key={day} className="text-center text-[10px] font-semibold text-gray-400 uppercase">
-                {day}
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 gap-1">
-            {days.map((day, dayIdx) => {
-              const isSelected = isSameDay(day, currentValue);
-              const isToday = isSameDay(day, today);
-              const isCurrentMonth = isSameMonth(day, currentMonth);
-              const isPast = isBefore(day, todayStart);
-
-              return (
-                <button
-                  key={day.toString()}
-                  disabled={isPast}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!isPast) handleDateClick(day);
-                  }}
-                  className={cn(
-                    "h-8 w-full rounded-md text-xs flex items-center justify-center transition-colors",
-                    !isCurrentMonth && !isPast && "text-gray-300",
-                    isCurrentMonth && !isSelected && !isPast && "text-gray-700 hover:bg-gray-100",
-                    isSelected && "bg-indigo-500 text-white font-medium shadow-sm hover:bg-indigo-600",
-                    isToday && !isSelected && "text-indigo-600 font-bold bg-indigo-50",
-                    isPast && "text-gray-300 opacity-50 cursor-not-allowed bg-gray-50/50"
-                  )}
-                >
-                  {format(day, 'd')}
-                </button>
-              );
-            })}
           </div>
         </div>
       )}

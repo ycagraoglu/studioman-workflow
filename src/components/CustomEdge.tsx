@@ -45,11 +45,17 @@ export default function CustomEdge({
           className="nodrag nopan flex items-center gap-2"
         >
           {data?.vehicle && (
-            <div className="bg-amber-100 border border-amber-200 rounded-md shadow-sm px-2 py-1 flex items-center gap-1 text-xs font-medium text-amber-800 group">
+            <div 
+              className="bg-amber-100 border border-amber-200 rounded-md shadow-sm px-2 py-1 flex items-center gap-1 text-xs font-medium text-amber-800 group cursor-pointer hover:bg-amber-200 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                openDrawer('addAsset', id, true, 'vehicle');
+              }}
+            >
               <Car className="w-3 h-3" />
               {data.vehicle.name}
               <button
-                className="ml-1 p-0.5 hover:bg-amber-200 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                className="ml-1 p-0.5 hover:bg-amber-300 rounded-full transition-colors opacity-0 group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation();
                   setEdges((edges) =>
