@@ -4,6 +4,7 @@ import { format, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-f
 import { tr } from 'date-fns/locale';
 import { cn } from '../utils/cn';
 import DatePicker from './DatePicker';
+import { Logo } from './Logo';
 
 interface AssetUsage {
   assetId: string;
@@ -109,7 +110,12 @@ export default function Dashboard({ onBack, onSelectWorkflow }: DashboardProps) 
 
   return (
     <div className="flex-grow h-full bg-gray-50 dark:bg-slate-800 overflow-y-auto transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-8 sm:pt-24 sm:pb-12">
+      <div className="sticky top-0 z-40 bg-gray-50/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-700/50 px-6 py-4">
+        <div className="cursor-pointer inline-block" onClick={onBack}>
+          <Logo />
+        </div>
+      </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-8 sm:pt-12 sm:pb-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <button 

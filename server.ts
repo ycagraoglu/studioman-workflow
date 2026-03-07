@@ -2,8 +2,19 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import Database from "better-sqlite3";
 import { v4 as uuidv4 } from "uuid";
+import fs from "fs";
 
-const db = new Database("workflow.db");
+let db: Database.Database;
+
+try {
+  db = new Database("workflow.db");
+} catch (error) {
+  console.error("Failed to open database, recreating...", error);
+  if (fs.existsSync("workflow.db")) {
+    fs.unlinkSync("workflow.db");
+  }
+  db = new Database("workflow.db");
+}
 
 // Initialize DB
 db.exec(`

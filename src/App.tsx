@@ -27,15 +27,17 @@ function AppContent() {
   return (
     <DrawerProvider>
       <div className="flex h-screen w-full bg-white dark:bg-slate-800 overflow-hidden font-sans transition-colors duration-300 relative">
-        <div 
-          className="absolute top-5 left-6 z-50 cursor-pointer"
-          onClick={() => {
-            setCurrentWorkflowId(null);
-            setView('list');
-          }}
-        >
-          <Logo />
-        </div>
+        {view === 'flow' && (
+          <div 
+            className="absolute top-5 left-6 z-50 cursor-pointer"
+            onClick={() => {
+              setCurrentWorkflowId(null);
+              setView('list');
+            }}
+          >
+            <Logo />
+          </div>
+        )}
 
         {showThemeSelector && <ThemeShowcase onClose={() => setShowThemeSelector(false)} />}
         

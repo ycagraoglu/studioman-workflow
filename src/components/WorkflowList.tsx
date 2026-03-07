@@ -5,6 +5,7 @@ import { tr } from 'date-fns/locale';
 import { showSuccessToast, showErrorToast } from '../utils/toast';
 import DatePicker from './DatePicker';
 import { cn } from '../utils/cn';
+import { Logo } from './Logo';
 
 interface Workflow {
   id: string;
@@ -152,8 +153,14 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
 
   return (
     <div className="flex-grow h-full bg-gray-50 dark:bg-slate-800 overflow-y-auto relative transition-colors duration-300">
+      <div className="sticky top-0 z-40 bg-gray-50/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-700/50 px-6 py-4">
+        <div className="inline-block">
+          <Logo />
+        </div>
+      </div>
+      
       {deletingId && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">İş Akışını Sil</h3>
             <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
@@ -178,7 +185,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
       )}
 
       {deletingTemplateId && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Şablonu Sil</h3>
             <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
@@ -202,7 +209,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-20 pb-8 sm:pt-24 sm:pb-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-8 sm:pt-12 sm:pb-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
           <div className="text-center sm:text-left">
             <h1 className="text-2xl font-medium text-gray-900 dark:text-white tracking-tight">İş Akışları</h1>
