@@ -1,11 +1,13 @@
 import React from 'react';
 import { Panel, useReactFlow } from '@xyflow/react';
-import { Map, LayoutGrid, Copy, Maximize, ZoomIn, ZoomOut, RotateCcw, Eraser } from 'lucide-react';
+import { Map, LayoutGrid, Copy, Maximize, ZoomIn, ZoomOut, RotateCcw, Eraser, Info } from 'lucide-react';
 import { cn } from '../../../utils/cn';
 
 interface BottomLeftControlsProps {
   showMiniMap: boolean;
   onToggleMiniMap: () => void;
+  showAgreementInfo: boolean;
+  onToggleAgreementInfo: () => void;
   onLayout: () => void;
   onDuplicate: () => void;
   onClear: () => void;
@@ -14,6 +16,8 @@ interface BottomLeftControlsProps {
 export const BottomLeftControls: React.FC<BottomLeftControlsProps> = ({
   showMiniMap,
   onToggleMiniMap,
+  showAgreementInfo,
+  onToggleAgreementInfo,
   onLayout,
   onDuplicate,
   onClear,
@@ -22,6 +26,18 @@ export const BottomLeftControls: React.FC<BottomLeftControlsProps> = ({
 
   return (
     <Panel position="bottom-left" className="flex gap-2 mb-4 ml-4">
+      <button 
+        onClick={onToggleAgreementInfo} 
+        className={cn(
+          "w-10 h-10 border rounded-lg shadow-sm flex items-center justify-center transition-colors",
+          showAgreementInfo 
+            ? 'bg-primary-light dark:bg-primary/10 border-primary/20 dark:border-primary/20 text-primary hover:bg-primary-light/80' 
+            : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white'
+        )}
+        title={showAgreementInfo ? "Anlaşma Bilgilerini Gizle" : "Anlaşma Bilgilerini Göster"}
+      >
+        <Info className="w-5 h-5" />
+      </button>
       <button 
         onClick={onToggleMiniMap} 
         className={cn(

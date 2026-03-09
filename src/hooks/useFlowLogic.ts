@@ -43,6 +43,7 @@ export function useFlowLogic(workflowId: string) {
     isSaving,
     hasUnsavedChanges,
     lastSaved,
+    agreementId,
     saveWorkflow,
     setHasUnsavedChanges
   } = useWorkflowApi(workflowId, nodes, edges, setNodes, setEdges, setWorkflowName);
@@ -129,7 +130,7 @@ export function useFlowLogic(workflowId: string) {
     nodes, setNodes, onNodesChange,
     edges, setEdges, onEdgesChange,
     isLoading, isSaving, workflowName, setWorkflowName,
-    hasUnsavedChanges, lastSaved,
+    hasUnsavedChanges, lastSaved, agreementId,
     onConnect, onSave, onLayout, onDuplicate, onDrop
   };
 }

@@ -57,12 +57,18 @@ export default function Dashboard({ onBack, onSelectWorkflow }: DashboardProps) 
     const matchesType = filterType === 'all' || item.assetType === filterType;
     
     let matchesDate = true;
-    if (filterRange.from && filterRange.to) {
-      const itemDate = parseISO(item.date);
-      matchesDate = isWithinInterval(itemDate, {
-        start: startOfDay(parseISO(filterRange.from)),
-        end: endOfDay(parseISO(filterRange.to))
-      });
+    if (filterRange.from && filterRange.to && item.date) {
+      try {
+        const itemDate = parseISO(item.date);
+        if (!isNaN(itemDate.getTime())) {
+          matchesDate = isWithinInterval(itemDate, {
+            start: startOfDay(parseISO(filterRange.from)),
+            end: endOfDay(parseISO(filterRange.to))
+          });
+        }
+      } catch (e) {
+        matchesDate = false;
+      }
     } else if (filterRange.from) {
       matchesDate = item.date === filterRange.from;
     }
@@ -239,7 +245,7 @@ export default function Dashboard({ onBack, onSelectWorkflow }: DashboardProps) 
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        {item.date ? format(new Date(item.date), 'd MMM yyyy', { locale: tr }) : 'Tarihsiz'}
+                        {item.date && !isNaN(new Date(item.date).getTime()) ? format(new Date(item.date), 'd MMM yyyy', { locale: tr }) : 'Tarihsiz'}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400 mt-1">
                         <Clock className="w-4 h-4 text-gray-400" />

@@ -5,6 +5,7 @@ import { Search, X, MapPin, User, Camera, PlusSquare, Play, Calendar, ArrowLeft,
 import { Asset, NodeData, AssetCategory } from '../types';
 import { cn } from '../utils/cn';
 import { showConflictToast } from '../utils/toast';
+import { crmService } from '../services/crmService';
 
 const ICON_MAP: Record<string, React.ElementType> = {
   PlusSquare,
@@ -73,11 +74,42 @@ const DEFAULT_NODE_TYPES = [
   { id: 'shooting', title: 'Çekim', description: 'Fotoğraf/Video çekim aşaması', iconName: 'Play', color: 'text-emerald-500' },
 ];
 
-export default function RightDrawer() {
+export default function RightDrawer({ agreementId }: { agreementId?: string | null }) {
   const { isOpen, mode, targetNodeId, targetEdgeId, initialCategory, closeDrawer } = useDrawer();
   const { setNodes, setEdges } = useReactFlow();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<AssetCategory>(null);
+  const [dynamicAssets, setDynamicAssets] = useState<Asset[]>(ASSETS);
+
+  useEffect(() => {
+    if (agreementId) {
+      Promise.all([
+        crmService.getAvailableTeam(agreementId),
+        crmService.getAvailableEquipment(agreementId)
+      ]).then(([team, equipment]) => {
+        const teamAssets: Asset[] = team.map(t => ({
+          id: t.id,
+          type: 'personnel',
+          name: t.name,
+          roleOrDetails: t.specialty,
+          imageUrl: t.imageUrl
+        }));
+        
+        const equipmentAssets: Asset[] = equipment.map(e => ({
+          id: e.id,
+          type: 'equipment',
+          name: e.name,
+          roleOrDetails: e.category
+        }));
+        
+        // Merge dynamic assets with static locations and vehicles
+        const staticAssets = ASSETS.filter(a => a.type === 'location' || a.type === 'vehicle');
+        setDynamicAssets([...staticAssets, ...teamAssets, ...equipmentAssets]);
+      }).catch(console.error);
+    } else {
+      setDynamicAssets(ASSETS);
+    }
+  }, [agreementId]);
 
   useEffect(() => {
     if (isOpen && initialCategory) {
@@ -294,7 +326,7 @@ export default function RightDrawer() {
     }
   };
 
-  const filteredAssets = ASSETS.filter(a => 
+  const filteredAssets = dynamicAssets.filter(a => 
     (!selectedCategory || a.type === selectedCategory) &&
     (a.name.toLowerCase().includes(search.toLowerCase()) || a.roleOrDetails?.toLowerCase().includes(search.toLowerCase()))
   );
@@ -625,7 +657,11 @@ export default function RightDrawer() {
                     asset.type === 'personnel' ? "text-emerald-500" : 
                     asset.type === 'vehicle' ? "text-amber-800" : "text-amber-500"
                   )}>
-                    {renderIcon(asset.type)}
+                    {asset.imageUrl ? (
+                      <img src={asset.imageUrl} alt={asset.name} className="w-5 h-5 rounded-full object-cover" />
+                    ) : (
+                      renderIcon(asset.type)
+                    )}
                   </div>
                   <div>
                     <div className="font-medium text-gray-900 dark:text-white text-sm">{asset.name}</div>

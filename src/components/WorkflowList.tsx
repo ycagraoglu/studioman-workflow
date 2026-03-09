@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Loader2, FileText, Trash2, Edit2, Check, X, LayoutDashboard, Search, Calendar } from 'lucide-react';
+import { Plus, Loader2, FileText, Trash2, Edit2, Check, X, LayoutDashboard, Search, Calendar, Sparkles } from 'lucide-react';
 import { format, parseISO, startOfDay, endOfDay } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { showSuccessToast, showErrorToast } from '../utils/toast';
@@ -11,6 +11,7 @@ interface Workflow {
   id: string;
   name: string;
   created_at: string;
+  is_ai_generated?: boolean | number;
 }
 
 interface WorkflowListProps {
@@ -47,7 +48,11 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
 
   const handleCreateNew = async (templateId?: string) => {
     try {
-      let initialData = { name: 'Yeni İş Akışı' };
+      let initialData: any = { 
+        name: 'Yeni İş Akışı',
+        // Mock agreement ID for demonstration purposes
+        agreement_id: '019cce94-d409-7a2c-949a-0c7cef4c1207'
+      };
       
       if (templateId) {
         const template = templates.find(t => t.id === templateId);
@@ -55,8 +60,9 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
           initialData = {
             name: `${template.name} (Kopya)`,
             nodes: template.nodes,
-            edges: template.edges
-          } as any;
+            edges: template.edges,
+            agreement_id: '019cce94-d409-7a2c-949a-0c7cef4c1207'
+          };
         }
       }
 
@@ -139,7 +145,19 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
 
   const filteredWorkflows = workflows.filter(workflow => {
     const matchesSearch = workflow.name.toLowerCase().includes(search.toLowerCase());
-    const matchesDate = !filterDate || format(new Date(workflow.created_at), 'yyyy-MM-dd') === filterDate;
+    
+    let matchesDate = true;
+    if (filterDate && workflow.created_at) {
+      try {
+        const dateObj = new Date(workflow.created_at);
+        if (!isNaN(dateObj.getTime())) {
+          matchesDate = format(dateObj, 'yyyy-MM-dd') === filterDate;
+        }
+      } catch (e) {
+        matchesDate = false;
+      }
+    }
+    
     return matchesSearch && matchesDate;
   });
 
@@ -310,7 +328,12 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
                         </button>
                       </div>
                     ) : (
-                      <h3 className="font-semibold text-gray-900 dark:text-white truncate pr-2">{workflow.name}</h3>
+                      <div className="flex items-center gap-2 truncate pr-2">
+                        <h3 className="font-semibold text-gray-900 dark:text-white truncate">{workflow.name}</h3>
+                        {workflow.is_ai_generated ? (
+                          <Sparkles className="w-4 h-4 text-amber-500 shrink-0" title="AI ile oluşturuldu" />
+                        ) : null}
+                      </div>
                     )}
                   </div>
                   
@@ -336,7 +359,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
                 
                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 text-xs text-gray-500 dark:text-slate-400 flex items-center justify-between">
                   <span>Oluşturulma:</span>
-                  <span>{format(new Date(workflow.created_at), 'd MMM yyyy HH:mm', { locale: tr })}</span>
+                  <span>{workflow.created_at && !isNaN(new Date(workflow.created_at).getTime()) ? format(new Date(workflow.created_at), 'd MMM yyyy HH:mm', { locale: tr }) : 'Bilinmiyor'}</span>
                 </div>
               </div>
             ))}
@@ -379,7 +402,7 @@ export default function WorkflowList({ onSelectWorkflow, onViewDashboard }: Work
                   
                   <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 text-xs text-gray-500 dark:text-slate-400 flex items-center justify-between">
                     <span>Oluşturulma:</span>
-                    <span>{format(new Date(template.createdAt), 'd MMM yyyy HH:mm', { locale: tr })}</span>
+                    <span>{template.createdAt && !isNaN(new Date(template.createdAt).getTime()) ? format(new Date(template.createdAt), 'd MMM yyyy HH:mm', { locale: tr }) : 'Bilinmiyor'}</span>
                   </div>
                 </div>
               ))}

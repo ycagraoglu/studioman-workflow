@@ -131,7 +131,11 @@ export const NodeAssetSection: React.FC<NodeAssetSectionProps> = ({
             <div key={asset.id} className="flex items-center justify-between bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded p-1.5 group shadow-sm">
               <div className="flex items-center gap-2">
                 <div className="p-1 rounded bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500">
-                  {renderIcon(asset.type)}
+                  {asset.imageUrl ? (
+                    <img src={asset.imageUrl} alt={asset.name} className="w-3 h-3 rounded-full object-cover" />
+                  ) : (
+                    renderIcon(asset.type)
+                  )}
                 </div>
                 <span className="text-xs font-medium text-gray-700 dark:text-slate-200">{asset.name}</span>
               </div>

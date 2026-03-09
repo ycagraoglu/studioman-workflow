@@ -11,6 +11,8 @@ interface FlowControlsProps {
   hasUnsavedChanges: boolean;
   showMiniMap: boolean;
   onToggleMiniMap: () => void;
+  showAgreementInfo: boolean;
+  onToggleAgreementInfo: () => void;
   onLayout: () => void;
   onDuplicate: () => void;
   onClear: () => void;
@@ -29,6 +31,8 @@ export const FlowControls: React.FC<FlowControlsProps> = ({
   hasUnsavedChanges,
   showMiniMap,
   onToggleMiniMap,
+  showAgreementInfo,
+  onToggleAgreementInfo,
   onLayout,
   onDuplicate,
   onClear,
@@ -51,6 +55,8 @@ export const FlowControls: React.FC<FlowControlsProps> = ({
       <BottomLeftControls 
         showMiniMap={showMiniMap}
         onToggleMiniMap={onToggleMiniMap}
+        showAgreementInfo={showAgreementInfo}
+        onToggleAgreementInfo={onToggleAgreementInfo}
         onLayout={onLayout}
         onDuplicate={onDuplicate}
         onClear={onClear}

@@ -7,6 +7,7 @@ export interface Asset {
   name: string;
   roleOrDetails?: string;
   mapUrl?: string; // Google Maps link for locations
+  imageUrl?: string; // Image URL for personnel
 }
 
 export interface Attachment {

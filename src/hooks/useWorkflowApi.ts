@@ -15,6 +15,7 @@ export function useWorkflowApi(
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [agreementId, setAgreementId] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -22,6 +23,7 @@ export function useWorkflowApi(
       .then(res => res.json())
       .then(data => {
         setWorkflowName(data.name || 'İsimsiz İş Akışı');
+        setAgreementId(data.agreement_id || null);
         if (data.nodes && data.nodes.length > 0) {
           setNodes(data.nodes);
         } else {
@@ -81,6 +83,7 @@ export function useWorkflowApi(
     isSaving,
     hasUnsavedChanges,
     lastSaved,
+    agreementId,
     saveWorkflow,
     setHasUnsavedChanges
   };

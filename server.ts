@@ -45,6 +45,20 @@ db.exec(`
   );
 `);
 
+// Add is_ai_generated column if it doesn't exist
+try {
+  db.exec(`ALTER TABLE workflows ADD COLUMN is_ai_generated INTEGER DEFAULT 0`);
+} catch (e) {
+  // Column already exists
+}
+
+// Add agreement_id column if it doesn't exist
+try {
+  db.exec(`ALTER TABLE workflows ADD COLUMN agreement_id TEXT`);
+} catch (e) {
+  // Column already exists
+}
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -60,9 +74,9 @@ async function startServer() {
 
   app.post("/api/workflows", (req, res) => {
     const id = uuidv4();
-    const { name } = req.body;
-    db.prepare("INSERT INTO workflows (id, name) VALUES (?, ?)").run(id, name || "Untitled Workflow");
-    res.json({ id, name });
+    const { name, is_ai_generated, agreement_id } = req.body;
+    db.prepare("INSERT INTO workflows (id, name, is_ai_generated, agreement_id) VALUES (?, ?, ?, ?)").run(id, name || "Untitled Workflow", is_ai_generated ? 1 : 0, agreement_id || null);
+    res.json({ id, name, is_ai_generated: is_ai_generated ? 1 : 0, agreement_id });
   });
 
   app.get("/api/workflows/:id", (req, res) => {
@@ -90,11 +104,17 @@ async function startServer() {
 
   app.put("/api/workflows/:id", (req, res) => {
     const { id } = req.params;
-    const { nodes, edges, name } = req.body;
+    const { nodes, edges, name, is_ai_generated, agreement_id } = req.body;
 
     const transaction = db.transaction(() => {
-      if (name) {
+      if (name !== undefined) {
         db.prepare("UPDATE workflows SET name = ? WHERE id = ?").run(name, id);
+      }
+      if (is_ai_generated !== undefined) {
+        db.prepare("UPDATE workflows SET is_ai_generated = ? WHERE id = ?").run(is_ai_generated ? 1 : 0, id);
+      }
+      if (agreement_id !== undefined) {
+        db.prepare("UPDATE workflows SET agreement_id = ? WHERE id = ?").run(agreement_id, id);
       }
       
       if (nodes && edges) {

@@ -28,11 +28,21 @@ export default function DatePicker({
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   
+  const getValidDate = (dateStr: string | undefined): Date | undefined => {
+    if (!dateStr) return undefined;
+    try {
+      const date = parseISO(dateStr);
+      return isNaN(date.getTime()) ? undefined : date;
+    } catch (e) {
+      return undefined;
+    }
+  };
+
   const selectedDate = mode === 'single' 
-    ? (value && typeof value === 'string' ? parseISO(value) : undefined)
+    ? (value && typeof value === 'string' ? getValidDate(value) : undefined)
     : (value && typeof value === 'object' ? { 
-        from: value.from ? parseISO(value.from) : undefined, 
-        to: value.to ? parseISO(value.to) : undefined 
+        from: getValidDate(value.from), 
+        to: getValidDate(value.to) 
       } : undefined);
 
   useEffect(() => {
@@ -83,15 +93,38 @@ export default function DatePicker({
 
   const getLabel = () => {
     if (mode === 'single') {
-      return value && typeof value === 'string' 
-        ? format(parseISO(value), 'd MMM yyyy', { locale: tr }) 
-        : placeholder;
+      if (value && typeof value === 'string') {
+        try {
+          const date = parseISO(value);
+          if (!isNaN(date.getTime())) {
+            return format(date, 'd MMM yyyy', { locale: tr });
+          }
+        } catch (e) {
+          // Fall through to placeholder
+        }
+      }
+      return placeholder;
     } else {
       const range = value as { from: string; to: string };
       if (range?.from && range?.to) {
-        return `${format(parseISO(range.from), 'd MMM', { locale: tr })} - ${format(parseISO(range.to), 'd MMM yyyy', { locale: tr })}`;
+        try {
+          const fromDate = parseISO(range.from);
+          const toDate = parseISO(range.to);
+          if (!isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+            return `${format(fromDate, 'd MMM', { locale: tr })} - ${format(toDate, 'd MMM yyyy', { locale: tr })}`;
+          }
+        } catch (e) {
+          // Fall through
+        }
       } else if (range?.from) {
-        return `${format(parseISO(range.from), 'd MMM yyyy', { locale: tr })} - ...`;
+        try {
+          const fromDate = parseISO(range.from);
+          if (!isNaN(fromDate.getTime())) {
+            return `${format(fromDate, 'd MMM yyyy', { locale: tr })} - ...`;
+          }
+        } catch (e) {
+          // Fall through
+        }
       }
       return placeholder;
     }

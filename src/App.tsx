@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import FlowCanvas from './components/FlowCanvas';
-import WorkflowList from './components/WorkflowList';
+import AgreementList from './components/AgreementList';
 import Dashboard from './components/Dashboard';
 import ThemeShowcase from './components/ThemeShowcase';
 import { DrawerProvider } from './contexts/DrawerContext';
@@ -12,15 +12,42 @@ import { Logo } from './components/Logo';
 function AppContent() {
   const [view, setView] = useState<'list' | 'flow' | 'dashboard'>('list');
   const [currentWorkflowId, setCurrentWorkflowId] = useState<string | null>(null);
+  const [currentMode, setCurrentMode] = useState<'ai' | 'manual' | null>(null);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
 
-  const handleSelectWorkflow = (id: string) => {
-    setCurrentWorkflowId(id);
-    setView('flow');
+  const handleSelectAgreement = async (agreementId: string, mode: 'ai' | 'manual', existingWorkflowId?: string, agreementName?: string) => {
+    try {
+      if (existingWorkflowId) {
+        setCurrentWorkflowId(existingWorkflowId);
+        setCurrentMode(null);
+        setView('flow');
+        return;
+      }
+
+      const workflowName = agreementName ? `${agreementName} İş Akışı` : 'Yeni İş Akışı';
+
+      // Create a new workflow for this agreement
+      const res = await fetch('/api/workflows', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: workflowName,
+          agreement_id: agreementId
+        })
+      });
+      const data = await res.json();
+      
+      setCurrentWorkflowId(data.id);
+      setCurrentMode(mode);
+      setView('flow');
+    } catch (error) {
+      console.error('Failed to create workflow:', error);
+    }
   };
 
   const handleBack = () => {
     setCurrentWorkflowId(null);
+    setCurrentMode(null);
     setView('list');
   };
 
@@ -53,17 +80,21 @@ function AppContent() {
         {view === 'flow' && currentWorkflowId ? (
           <FlowCanvas 
             workflowId={currentWorkflowId} 
+            initialMode={currentMode}
             onBack={handleBack} 
           />
         ) : view === 'dashboard' ? (
           <Dashboard 
             onBack={() => setView('list')} 
-            onSelectWorkflow={handleSelectWorkflow}
+            onSelectWorkflow={(id) => {
+              setCurrentWorkflowId(id);
+              setCurrentMode(null);
+              setView('flow');
+            }}
           />
         ) : (
-          <WorkflowList 
-            onSelectWorkflow={handleSelectWorkflow} 
-            onViewDashboard={() => setView('dashboard')}
+          <AgreementList 
+            onSelectAgreement={handleSelectAgreement} 
           />
         )}
       </div>
