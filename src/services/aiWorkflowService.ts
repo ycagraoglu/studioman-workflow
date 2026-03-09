@@ -1,8 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Initialize Gemini API client
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY });
-
 // Define the expected JSON schema for the workflow
 const workflowSchema = {
   type: Type.OBJECT,
@@ -70,6 +67,14 @@ const workflowSchema = {
 
 export async function generateWorkflowFromPrompt(prompt: string, agreementData?: any) {
   try {
+    const apiKey = localStorage.getItem('gemini_api_key');
+
+    if (!apiKey) {
+      throw new Error("API Anahtarı bulunamadı. Lütfen sağ alt köşedeki Ayarlar ikonuna tıklayarak Gemini API anahtarınızı girin.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
+
     let agreementContext = '';
     if (agreementData) {
       agreementContext = `

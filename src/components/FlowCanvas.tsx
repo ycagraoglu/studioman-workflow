@@ -167,9 +167,10 @@ function Flow({ workflowId, initialMode, onBack }: FlowProps) {
         
         showSuccessToast('İş akışı başarıyla oluşturuldu');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      showErrorToast('İş akışı oluşturulurken bir hata oluştu');
+      const errorMessage = error?.message || 'İş akışı oluşturulurken bir hata oluştu';
+      showErrorToast(errorMessage);
     } finally {
       setIsGenerating(false);
     }
