@@ -19,7 +19,7 @@ export const TopLeftControls: React.FC<TopLeftControlsProps> = ({
   hasUnsavedChanges,
 }) => {
   return (
-    <Panel position="top-left" className="flex items-center gap-3 mt-4" style={{ left: '160px' }}>
+    <Panel position="top-left" className="flex items-center gap-3 mt-4" style={{ left: '240px' }}>
       <button 
         onClick={onBack} 
         className="w-10 h-10 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm flex items-center justify-center text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-colors"

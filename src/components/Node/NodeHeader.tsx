@@ -33,6 +33,7 @@ export const NodeHeader: React.FC<NodeHeaderProps> = ({
           value={date} 
           onChange={onDateChange} 
           disabled={!isActive}
+          disablePastDates={true}
         />
         <button onClick={onToggleEditing} className="text-gray-400 dark:text-slate-400 hover:text-primary transition-colors">
           {isEditing ? <Check className="w-4 h-4 text-emerald-500" /> : <Edit2 className="w-4 h-4" />}

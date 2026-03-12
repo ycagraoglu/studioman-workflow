@@ -10,9 +10,10 @@ import { Button } from './ui/button';
 
 interface AgreementListProps {
   onSelectAgreement: (agreementId: string, mode: 'ai' | 'manual', existingWorkflowId?: string, agreementName?: string) => void;
+  onNavigateToDashboard?: () => void;
 }
 
-export default function AgreementList({ onSelectAgreement }: AgreementListProps) {
+export default function AgreementList({ onSelectAgreement, onNavigateToDashboard }: AgreementListProps) {
   const [agreements, setAgreements] = useState<Agreement[]>([]);
   const [workflows, setWorkflows] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,6 +85,16 @@ export default function AgreementList({ onSelectAgreement }: AgreementListProps)
               Tarihi geçmemiş anlaşmalarınız için iş akışı oluşturun.
             </p>
           </div>
+          {onNavigateToDashboard && (
+            <Button 
+              onClick={onNavigateToDashboard}
+              variant="outline"
+              className="gap-2"
+            >
+              Dashboard'a Git
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          )}
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden mb-6">

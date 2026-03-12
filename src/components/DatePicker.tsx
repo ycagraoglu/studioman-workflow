@@ -14,6 +14,7 @@ interface DatePickerProps {
   className?: string;
   showClear?: boolean;
   mode?: 'single' | 'range';
+  disablePastDates?: boolean;
 }
 
 export default function DatePicker({ 
@@ -23,7 +24,8 @@ export default function DatePicker({
   placeholder = 'Tarih Seç',
   className,
   showClear = false,
-  mode = 'single'
+  mode = 'single',
+  disablePastDates = false
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -239,6 +241,7 @@ export default function DatePicker({
             locale={tr}
             showOutsideDays
             className="border-none"
+            disabled={disablePastDates ? { before: startOfDay(new Date()) } : undefined}
           />
           <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-700 flex justify-between">
             <button 

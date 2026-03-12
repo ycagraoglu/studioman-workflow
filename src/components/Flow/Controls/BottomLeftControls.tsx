@@ -1,6 +1,6 @@
 import React from 'react';
 import { Panel, useReactFlow } from '@xyflow/react';
-import { Map, LayoutGrid, Copy, Maximize, ZoomIn, ZoomOut, RotateCcw, Eraser, Info } from 'lucide-react';
+import { Map, LayoutGrid, Copy, Maximize, ZoomIn, ZoomOut, RotateCcw, Eraser, Info, Settings } from 'lucide-react';
 import { cn } from '../../../utils/cn';
 
 interface BottomLeftControlsProps {
@@ -11,6 +11,7 @@ interface BottomLeftControlsProps {
   onLayout: () => void;
   onDuplicate: () => void;
   onClear: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const BottomLeftControls: React.FC<BottomLeftControlsProps> = ({
@@ -21,6 +22,7 @@ export const BottomLeftControls: React.FC<BottomLeftControlsProps> = ({
   onLayout,
   onDuplicate,
   onClear,
+  onOpenSettings
 }) => {
   const { zoomIn, zoomOut, fitView } = useReactFlow();
 
@@ -100,6 +102,14 @@ export const BottomLeftControls: React.FC<BottomLeftControlsProps> = ({
         title="Tümünü Temizle"
       >
         <Eraser className="w-5 h-5" />
+      </button>
+      <div className="w-px h-10 bg-gray-200 dark:bg-slate-700 mx-1" />
+      <button 
+        onClick={onOpenSettings} 
+        className="w-10 h-10 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm flex items-center justify-center text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-colors"
+        title="Ayarlar"
+      >
+        <Settings className="w-5 h-5" />
       </button>
     </Panel>
   );

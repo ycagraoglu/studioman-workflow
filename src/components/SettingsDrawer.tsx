@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Check, Shield, Zap, TrendingUp, Award, Moon, Sun, Monitor, X, Key } from 'lucide-react';
 import { useTheme, ColorTheme, AppearanceMode } from '../contexts/ThemeContext';
 
@@ -55,16 +55,23 @@ const modes = [
   { id: 'system' as AppearanceMode, name: 'Sistem', icon: Monitor }
 ];
 
-export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
+export default function SettingsDrawer({ onClose, focusApiKey }: { onClose: () => void, focusApiKey?: boolean }) {
   const { colorTheme, appearanceMode, setColorTheme, setAppearanceMode } = useTheme();
   const [apiKey, setApiKey] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const savedKey = localStorage.getItem('gemini_api_key');
     if (savedKey) {
       setApiKey(savedKey);
     }
-  }, []);
+    
+    if (focusApiKey) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300); // Wait for drawer slide animation
+    }
+  }, [focusApiKey]);
 
   const handleSave = () => {
     if (apiKey.trim()) {
@@ -109,6 +116,7 @@ export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
                 Google Gemini API Key
               </label>
               <input
+                ref={inputRef}
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}

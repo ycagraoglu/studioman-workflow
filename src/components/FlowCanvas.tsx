@@ -44,9 +44,10 @@ interface FlowProps {
   workflowId: string;
   initialMode?: 'ai' | 'manual' | null;
   onBack: () => void;
+  onOpenSettings?: () => void;
 }
 
-function Flow({ workflowId, initialMode, onBack }: FlowProps) {
+function Flow({ workflowId, initialMode, onBack, onOpenSettings }: FlowProps) {
   const {
     nodes, setNodes, onNodesChange,
     edges, setEdges, onEdgesChange,
@@ -236,6 +237,7 @@ function Flow({ workflowId, initialMode, onBack }: FlowProps) {
           isDrawerOpen={isOpen}
           onToggleDrawer={() => isOpen ? closeDrawer() : openDrawer('addNode', nodes[0]?.id || '')}
           onAddNewNode={handleAddNewNode}
+          onOpenSettings={onOpenSettings}
         />
         
         {agreement && showAgreementInfo && (
@@ -307,10 +309,10 @@ function Flow({ workflowId, initialMode, onBack }: FlowProps) {
   );
 }
 
-export default function FlowCanvas({ workflowId, initialMode, onBack }: FlowProps) {
+export default function FlowCanvas({ workflowId, initialMode, onBack, onOpenSettings }: FlowProps) {
   return (
     <ReactFlowProvider>
-      <Flow workflowId={workflowId} initialMode={initialMode} onBack={onBack} />
+      <Flow workflowId={workflowId} initialMode={initialMode} onBack={onBack} onOpenSettings={onOpenSettings} />
     </ReactFlowProvider>
   );
 }

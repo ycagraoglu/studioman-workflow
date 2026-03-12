@@ -21,6 +21,7 @@ interface FlowControlsProps {
   isDrawerOpen: boolean;
   onToggleDrawer: () => void;
   onAddNewNode: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const FlowControls: React.FC<FlowControlsProps> = ({
@@ -40,7 +41,8 @@ export const FlowControls: React.FC<FlowControlsProps> = ({
   onShowTemplateModal,
   isDrawerOpen,
   onToggleDrawer,
-  onAddNewNode
+  onAddNewNode,
+  onOpenSettings
 }) => {
   return (
     <>
@@ -60,6 +62,7 @@ export const FlowControls: React.FC<FlowControlsProps> = ({
         onLayout={onLayout}
         onDuplicate={onDuplicate}
         onClear={onClear}
+        onOpenSettings={onOpenSettings}
       />
 
       <TopRightControls 
